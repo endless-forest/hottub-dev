@@ -7,6 +7,8 @@ import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { ArrowLeft, Phone, Mail } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 interface Product {
   id: string;
   name: string;
