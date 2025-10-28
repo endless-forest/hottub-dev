@@ -12,6 +12,7 @@ export function ProductGrid() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
+  const [compareList, setCompareList] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -58,6 +59,12 @@ export function ProductGrid() {
     setSelectedBrand("");
   };
 
+  const toggleCompare = (id: string) => {
+    setCompareList((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
   if (loading) {
     return (
       <section className="px-6 pb-12 text-center">
@@ -79,12 +86,19 @@ export function ProductGrid() {
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600">No products match your search criteria.</p>
+          <p className="text-gray-600">
+            No products match your search criteria.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              compareList={compareList}
+              setCompareList={setCompareList}
+            />
           ))}
         </div>
       )}
@@ -108,7 +122,6 @@ export function ProductGrid() {
         </div>
       </div>
 
-      {/* Compare bar now uses global context */}
       <CompareBar />
     </section>
   );
