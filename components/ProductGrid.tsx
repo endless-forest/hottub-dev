@@ -12,7 +12,6 @@ export function ProductGrid() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
-  const [compareList, setCompareList] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,15 +31,14 @@ export function ProductGrid() {
     fetchProducts();
   }, []);
 
-const brands = useMemo(() => {
-  const s = new Set(
-    products
-      .map((p) => p.brand)
-      .filter((b): b is string => typeof b === "string" && b.trim().length > 0)
-  );
-  return Array.from(s).sort();
-}, [products]);
-
+  const brands = useMemo(() => {
+    const s = new Set(
+      products
+        .map((p) => p.brand)
+        .filter((b): b is string => typeof b === "string" && b.trim().length > 0)
+    );
+    return Array.from(s).sort();
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -58,12 +56,6 @@ const brands = useMemo(() => {
   const handleClearFilters = () => {
     setSearchTerm("");
     setSelectedBrand("");
-  };
-
-  const toggleCompare = (id: string) => {
-    setCompareList((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
   };
 
   if (loading) {
@@ -87,19 +79,12 @@ const brands = useMemo(() => {
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600">
-            No products match your search criteria.
-          </p>
+          <p className="text-gray-600">No products match your search criteria.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              compareList={compareList}
-              setCompareList={setCompareList}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
@@ -123,7 +108,8 @@ const brands = useMemo(() => {
         </div>
       </div>
 
-      <CompareBar ids={compareList} />
+      {/* Compare bar now uses global context */}
+      <CompareBar />
     </section>
   );
 }
