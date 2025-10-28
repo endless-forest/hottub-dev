@@ -158,7 +158,7 @@ export default function Booking() {
             <div>
               <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock className="w-4 h-4 inline mr-1" />
-                Preferred Time *
+                Preferred Time
               </label>
               <select
                 id="time"
