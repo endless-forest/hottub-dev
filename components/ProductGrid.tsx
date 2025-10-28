@@ -2,16 +2,18 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import Link from "next/link";
-import Image from "next/image";
 import { ProductFilter } from "./ProductFilter";
+import { ProductCard } from "./ProductCard";
+import { CompareBar } from "./CompareBar";
 
 interface Product {
   id: string;
   name: string;
   brand: string;
   description: string;
-  price_range: string;
+  price?: string | null;
+  price_range?: string | null;
+  rating?: number | null;
   image_url: string;
 }
 
@@ -20,8 +22,134 @@ export function ProductGrid() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
+  const [compareList, setCompareList] = useState<string[]>([]);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching products:", error);
+      } else {
+        setProducts((data as Product[]) || []);
+      }
+      setLoading(false);
+    };
+
+    fetchProducts();
+  }, []);
+
+  const brands = useMemo(() => {
+    const set = new Set(products.map((p) => p.brand));
+    return Array.from(set).sort();
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesSearch =
+        !searchTerm ||
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesBrand = !selectedBrand || product.brand === selectedBrand;
+
+      return matchesSearch && matchesBrand;
+    });
+  }, [products, searchTerm, selectedBrand]);
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedBrand("");
+  };
+
+  const toggleCompare = (id: string) => {
+    setCompareList((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
+  if (loading) {
+    return (
+      <section className="px-6 pb-12 text-center">
+        <p className="text-gray-600">Loading products...</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="px-6 pb-12 max-w-7xl mx-auto">
+      <ProductFilter
+        searchTerm={searchTerm}
+        selectedBrand={selectedBrand}
+        brands={brands}
+        onSearchChange={setSearchTerm}
+        onBrandChange={setSelectedBrand}
+        onClearFilters={handleClearFilters}
+      />
+
+      {filteredProducts.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-600">No products match your search criteria.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isCompared={compareList.includes(product.id)}
+              onToggleCompare={() => toggleCompare(product.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Mid-page CTA strip */}
+      <div className="mt-12">
+        <div className="mx-auto max-w-4xl bg-gradient-to-r from-blue-700 to-indigo-600 text-white rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <p className="text-lg font-semibold">Not sure which spa fits you? Take our 30-second quiz.</p>
+          </div>
+          <div>
+            <a href="/quiz" className="inline-block bg-white text-blue-700 font-semibold px-4 py-2 rounded-md">Take the Quiz</a>
+          </div>
+        </div>
+      </div>
+
+      <CompareBar ids={compareList} />
+    </section>
+  );
+}
+"use client";
+
+ "use client";
+import { supabase } from "@/lib/supabaseClient";
+import Link from "next/link";
+import Image from "next/image";
+import { ProductFilter } from "./ProductFilter";
+
+interface Product {
+ import { ProductCard } from "./ProductCard";
+ import { CompareBar } from "./CompareBar";
+  id: string;
+  name: string;
+  id: string;
+  name: string;
+  brand: string;
+  description: string;
+  price?: string | null;
+  price_range?: string;
+  rating?: number | null;
+  image_url: string;
+export function ProductGrid() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+
+  useEffect(() => {
+  const [compareList, setCompareList] = useState<string[]>([]);
     const fetchProducts = async () => {
       console.log("Fetching products...");
       console.log("Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
@@ -69,6 +197,9 @@ export function ProductGrid() {
 
   if (loading) {
     return (
+  const toggleCompare = (id: string) => {
+    setCompareList(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
+  };
       <section className="px-6 pb-12 text-center">
         <p className="text-gray-600">Loading products...</p>
       </section>
@@ -96,39 +227,16 @@ export function ProductGrid() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
             <Link
+            <ProductCard
               key={product.id}
-              href={`/models/${product.id}`}
-              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow overflow-hidden group block"
-            >
-              <div className="overflow-hidden">
-                <Image
-                  src={product.image_url}
-                  alt={product.name}
-                  width={400}
-                  height={224}
-                  priority={filteredProducts.indexOf(product) < 2}
-                  className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-blue-700 mb-1">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-3">{product.brand}</p>
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                  {product.description}
-                </p>
-                <p className="font-bold text-gray-900 text-lg">
-                  {product.price_range}
-                </p>
-                <p className="text-blue-600 text-sm font-medium mt-4 group-hover:underline">
-                  View Details →
-                </p>
-              </div>
-            </Link>
-          ))}
+              product={product}
+              isCompared={compareList.includes(product.id)}
+              onToggleCompare={() => toggleCompare(product.id)}
+            />
         </div>
       )}
     </section>
+      {/* Compare bar floating button */}
+      <CompareBar ids={compareList} />
   );
 }
