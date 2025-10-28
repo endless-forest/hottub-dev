@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 interface CompareBarProps {
-  ids: string[]; // ✅ match ProductGrid prop name
+  ids: string[];
 }
 
 export function CompareBar({ ids }: CompareBarProps) {

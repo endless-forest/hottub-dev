@@ -32,15 +32,14 @@ export function ProductGrid() {
     fetchProducts();
   }, []);
 
-const brands = useMemo(() => {
-  const s = new Set(
-    products
-      .map((p) => p.brand)
-      .filter((b): b is string => typeof b === "string" && b.trim().length > 0)
-  );
-  return Array.from(s).sort();
-}, [products]);
-
+  const brands = useMemo(() => {
+    const s = new Set(
+      products
+        .map((p) => p.brand)
+        .filter((b): b is string => typeof b === "string" && b.trim().length > 0)
+    );
+    return Array.from(s).sort();
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
