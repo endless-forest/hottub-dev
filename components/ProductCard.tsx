@@ -1,35 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback } from "react";
-import type { Product } from "@/types/Product"; // ✅ shared type import
+import type { Product } from "@/types/Product";
+import { useCompare } from "@/context/CompareContext";
 
-interface ProductCardProps {
-  product: Product;
-  compareList?: string[];
-  setCompareList?: React.Dispatch<React.SetStateAction<string[]>>;
-}
-
-export function ProductCard({
-  product,
-  compareList = [],
-  setCompareList,
-}: ProductCardProps) {
-  const id = product.id?.toString(); // ensure it's a string
-  const isCompared = compareList.includes(id);
-
-  const toggleCompare = useCallback(() => {
-    if (!setCompareList) return;
-    if (isCompared) {
-      setCompareList(compareList.filter((pid) => pid !== id));
-    } else {
-      setCompareList([...compareList, id]);
-    }
-  }, [compareList, isCompared, id, setCompareList]);
+export function ProductCard({ product }: { product: Product }) {
+  const { isCompared, toggleCompare } = useCompare();
+  const id = product.id?.toString();
 
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-lg transition transform hover:-translate-y-1 p-4 flex flex-col justify-between">
-      {/* clickable image + title */}
+      {/* Clickable image + title */}
       <Link href={`/models/${id}`} className="block group">
         <div className="overflow-hidden rounded-md">
           <img
@@ -44,7 +25,9 @@ export function ProductCard({
         </h3>
       </Link>
 
-      <p className="text-gray-600 text-sm flex-grow mt-1">{product.description}</p>
+      <p className="text-gray-600 text-sm flex-grow mt-1">
+        {product.description}
+      </p>
 
       <div className="mt-3 text-blue-700 font-bold text-lg">
         ${product.price.toLocaleString()}
@@ -69,8 +52,8 @@ export function ProductCard({
       <label className="flex items-center mt-3 text-sm cursor-pointer">
         <input
           type="checkbox"
-          checked={isCompared}
-          onChange={toggleCompare}
+          checked={isCompared(id!)}
+          onChange={() => toggleCompare(id!)}
           className="mr-2 accent-blue-600"
         />
         Compare
