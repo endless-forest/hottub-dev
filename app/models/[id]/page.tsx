@@ -1,181 +1,173 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Layout } from "@/components/Layout";
 import { supabase } from "@/lib/supabaseClient";
-import Link from "next/link";
-import { ArrowLeft, Phone, Mail } from "lucide-react";
 
 interface Product {
   id: string;
   name: string;
-  brand: string;
   description: string;
-  price_range: string;
-  image_url: string;
-  video_url: string | null;
+  price: number;
+  image_url?: string;
+  rating?: number;
+  seating_capacity?: number;
+  jet_count?: number;
+  color_options?: string;
+  dimensions?: string;
+  warranty_years?: number;
 }
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
+export default function ModelDetails() {
+  const { id } = useParams();
+  const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    async function fetchProduct() {
+      if (!id) return;
+
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("id", params.id)
-        .maybeSingle();
+        .eq("id", id)
+        .single();
 
-      if (error) {
-        console.error("Error fetching product:", error);
-        setLoading(false);
-        return;
-      }
+      if (error) console.error("Error fetching product:", error);
+      else setProduct(data);
 
-      if (!data) {
-        router.push("/models");
-        return;
-      }
-
-      setProduct(data);
       setLoading(false);
-    };
+    }
 
     fetchProduct();
-  }, [params.id, router]);
+  }, [id]);
 
   if (loading) {
     return (
-      <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <p className="text-gray-600">Loading product details...</p>
-        </div>
-      </Layout>
+      <main className="min-h-screen flex items-center justify-center text-gray-600">
+        Loading model details...
+      </main>
     );
   }
 
   if (!product) {
-    return null;
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center text-center">
+        <p className="text-gray-600 mb-4">Model not found.</p>
+        <button
+          onClick={() => router.push("/")}
+          className="bg-blue-700 text-white px-6 py-2 rounded hover:bg-blue-800 transition"
+        >
+          Back to Models
+        </button>
+      </main>
+    );
   }
 
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <Link
-          href="/models"
-          className="inline-flex items-center text-blue-700 hover:text-blue-800 mb-8 font-medium transition"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Models
-        </Link>
-
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="relative">
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="w-full h-full object-cover min-h-[400px]"
-              />
-            </div>
-
-            <div className="p-8">
-              <div className="mb-6">
-                <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">
-                  {product.brand}
-                </p>
-                <h1 className="text-4xl font-bold text-blue-800 mb-4">
-                  {product.name}
-                </h1>
-                <p className="text-2xl font-bold text-gray-900">
-                  {product.price_range}
-                </p>
-              </div>
-
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                  About This Model
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-
-              {product.video_url && (
-                <div className="mb-8">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
-                    Video Overview
-                  </h2>
-                  <a
-                    href={product.video_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-700 underline"
-                  >
-                    Watch Demo Video →
-                  </a>
-                </div>
-              )}
-
-              <div className="space-y-4">
-                <Link
-                  href={`/contact?model=${encodeURIComponent(product.name)}`}
-                  className="block w-full bg-blue-700 hover:bg-blue-800 text-white text-center px-6 py-4 rounded-lg font-semibold transition-colors"
-                >
-                  Request a Quote
-                </Link>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <a
-                    href="tel:7075551234"
-                    className="flex items-center justify-center border-2 border-blue-700 text-blue-700 hover:bg-blue-50 px-4 py-3 rounded-lg font-medium transition"
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call Us
-                  </a>
-                  <Link
-                    href="/contact"
-                    className="flex items-center justify-center border-2 border-blue-700 text-blue-700 hover:bg-blue-50 px-4 py-3 rounded-lg font-medium transition"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-12 bg-blue-50 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-blue-800 mb-4">
-            Why Choose Santa Rosa Spas?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Expert Guidance</h3>
-              <p className="text-gray-600 text-sm">
-                Our team helps you find the perfect spa for your needs and space.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Quality Products</h3>
-              <p className="text-gray-600 text-sm">
-                We only carry premium brands known for durability and comfort.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Local Service</h3>
-              <p className="text-gray-600 text-sm">
-                Serving Santa Rosa and surrounding areas with dedicated support.
-              </p>
-            </div>
-          </div>
+    <main className="min-h-screen bg-gray-50 pb-16">
+      {/* Hero Image */}
+      <div className="relative h-[400px] w-full">
+        <img
+          src={product.image_url}
+          alt={product.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">
+            {product.name}
+          </h1>
         </div>
       </div>
-    </Layout>
+
+      {/* Main Info Section */}
+      <section className="max-w-6xl mx-auto mt-10 px-4">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Description */}
+          <div className="flex-1">
+            <p className="text-gray-700 text-lg mb-4">{product.description}</p>
+
+            <p className="text-2xl text-blue-700 font-bold mb-6">
+              ${product.price.toLocaleString()}
+            </p>
+
+            {product.rating && (
+              <p className="text-yellow-500 mb-4">
+                ⭐ {product.rating.toFixed(1)} / 5.0
+              </p>
+            )}
+
+            <button
+              onClick={() =>
+                router.push(
+                  `/book-visit?model=${encodeURIComponent(product.name)}`
+                )
+              }
+              className="bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition"
+            >
+              Book Your Visit
+            </button>
+          </div>
+
+          {/* Specs Table */}
+          <div className="flex-1 bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4 text-blue-800">
+              Specifications
+            </h2>
+            <table className="w-full text-sm">
+              <tbody>
+                <tr>
+                  <td className="py-2 font-medium text-gray-700">
+                    Seating Capacity
+                  </td>
+                  <td className="py-2 text-gray-600">
+                    {product.seating_capacity ?? "–"}
+                  </td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="py-2 font-medium text-gray-700">Jet Count</td>
+                  <td className="py-2 text-gray-600">
+                    {product.jet_count ?? "–"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2 font-medium text-gray-700">
+                    Color Options
+                  </td>
+                  <td className="py-2 text-gray-600">
+                    {product.color_options ?? "–"}
+                  </td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="py-2 font-medium text-gray-700">Dimensions</td>
+                  <td className="py-2 text-gray-600">
+                    {product.dimensions ?? "–"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2 font-medium text-gray-700">Warranty</td>
+                  <td className="py-2 text-gray-600">
+                    {product.warranty_years
+                      ? `${product.warranty_years} years`
+                      : "–"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Back link */}
+        <div className="mt-10 text-center">
+          <button
+            onClick={() => router.push("/")}
+            className="text-blue-700 font-semibold hover:underline"
+          >
+            ← Back to all models
+          </button>
+        </div>
+      </section>
+    </main>
   );
 }

@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Calendar, Clock } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Booking() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const modelFromUrl = searchParams?.get("model") ?? "";
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -12,8 +18,9 @@ export default function Booking() {
     date: "",
     time: "",
     model_interest: "",
-    notes: ""
+    notes: "",
   });
+
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,7 +29,16 @@ export default function Booking() {
     "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
   ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  // ✅ Auto-fill "Model of Interest" from URL param
+  useEffect(() => {
+    if (modelFromUrl) {
+      setForm((prev) => ({ ...prev, model_interest: modelFromUrl }));
+    }
+  }, [modelFromUrl]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -32,33 +48,20 @@ export default function Booking() {
     setStatus("Booking...");
 
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/submitAppointment`;
+      // 1️⃣ Insert appointment into Supabase
+      const { error } = await supabase.from("appointments").insert([form]);
+      if (error) throw error;
 
-      const response = await fetch(apiUrl, {
+      // 2️⃣ Trigger confirmation email via Supabase Edge Function
+      await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-confirmation-email`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
-      const data = await response.json();
+      // 3️⃣ Redirect to thank-you page
+      router.push("/thank-you");
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to book appointment");
-      }
-
-      setStatus("Appointment booked! We'll confirm via email shortly.");
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        date: "",
-        time: "",
-        model_interest: "",
-        notes: ""
-      });
     } catch (error) {
       console.error("Booking error:", error);
       setStatus("Error booking appointment. Please try again.");
@@ -67,7 +70,7 @@ export default function Booking() {
     }
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <Layout>
@@ -213,7 +216,11 @@ export default function Booking() {
           </button>
 
           {status && (
-            <p className={`text-sm text-center ${status.includes("Error") ? "text-red-600" : "text-green-600"}`}>
+            <p
+              className={`text-sm text-center ${
+                status.includes("Error") ? "text-red-600" : "text-green-600"
+              }`}
+            >
               {status}
             </p>
           )}

@@ -9,8 +9,8 @@ export default function Models() {
           Our Hot Tub Models
         </h1>
         <p className="text-gray-600 text-lg mb-12 max-w-2xl mx-auto">
-          Handpicked for comfort, quality, and style. Each hot tub is designed to transform
-          your backyard into a personal wellness retreat.
+          Handpicked for comfort, quality, and style. Each hot tub is designed
+          to transform your backyard into a personal wellness retreat.
         </p>
       </section>
       <ProductGrid />

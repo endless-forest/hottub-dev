@@ -54,24 +54,15 @@ export function ProductFilter({
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
+        {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
+            className="flex items-center justify-center px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
           >
-            Show All Models
+            <X className="w-4 h-4 mr-2" />
+            Clear
           </button>
-
-          {hasActiveFilters && (
-            <button
-              onClick={onClearFilters}
-              className="flex items-center justify-center px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
-            >
-              <X className="w-4 h-4 mr-2" />
-              Clear
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

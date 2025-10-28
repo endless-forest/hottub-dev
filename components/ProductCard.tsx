@@ -1,70 +1,86 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { StarRating } from "./StarRating";
+import { useCallback } from "react";
 
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  description: string;
-  price?: string | null;
-  price_range?: string;
-  rating?: number | null;
-  image_url: string;
+interface ProductCardProps {
+  product: {
+    id: string | number;
+    name: string;
+    description: string;
+    price: number;
+    image_url?: string;
+    rating?: number;
+  };
+  compareList?: string[];
+  setCompareList?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function ProductCard({
   product,
-  isCompared,
-  onToggleCompare,
-}: {
-  product: Product;
-  isCompared: boolean;
-  onToggleCompare: () => void;
-}) {
-  const displayPrice = product.price ?? product.price_range ?? "Call for price";
+  compareList = [],
+  setCompareList,
+}: ProductCardProps) {
+  const id = product.id?.toString(); // ensure it's a string
+  const isCompared = compareList.includes(id);
+
+  const toggleCompare = useCallback(() => {
+    if (!setCompareList) return;
+    if (isCompared) {
+      setCompareList(compareList.filter((pid) => pid !== id));
+    } else {
+      setCompareList([...compareList, id]);
+    }
+  }, [compareList, isCompared, id, setCompareList]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow overflow-hidden group">
-      <Link href={`/models/${product.id}`} className="block">
-        <div className="relative overflow-hidden h-56">
-          <Image
-            src={product.image_url}
+    <div className="bg-white rounded-lg shadow hover:shadow-lg transition transform hover:-translate-y-1 p-4 flex flex-col justify-between">
+      {/* clickable image + title */}
+      <Link href={`/models/${id}`} className="block group">
+        <div className="overflow-hidden rounded-md">
+          <img
+            src={product.image_url || "/placeholder.jpg"}
             alt={product.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-48 object-cover rounded-md transition-transform duration-300 group-hover:scale-105"
           />
         </div>
+
+        <h3 className="text-lg font-semibold mt-3 text-gray-800 group-hover:text-blue-700 transition-colors">
+          {product.name}
+        </h3>
       </Link>
 
-      <div className="p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-semibold text-blue-700 mb-1">{product.name}</h3>
-            <p className="text-sm text-gray-500 mb-1">{product.brand}</p>
-          </div>
-          <div className="text-lg font-bold text-gray-900">{displayPrice}</div>
-        </div>
+      <p className="text-gray-600 text-sm flex-grow mt-1">{product.description}</p>
 
-        <p className="text-gray-700 text-sm leading-relaxed my-3">{product.description}</p>
-
-        <div className="flex items-center justify-between mt-4">
-          <StarRating rating={product.rating ?? 0} />
-
-          <label className="inline-flex items-center text-sm">
-            <input
-              type="checkbox"
-              checked={isCompared}
-              onChange={onToggleCompare}
-              className="form-checkbox h-4 w-4 text-blue-600"
-            />
-            <span className="ml-2 text-gray-700">Compare</span>
-          </label>
-        </div>
+      <div className="mt-3 text-blue-700 font-bold text-lg">
+        ${product.price.toLocaleString()}
       </div>
+
+      {product.rating !== undefined && (
+        <div className="flex mt-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <svg
+              key={i}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill={i < Math.round(product.rating!) ? "gold" : "#e5e7eb"}
+              className="w-4 h-4"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.2 3.692a1 1 0 00.95.69h3.884c.969 0 1.371 1.24.588 1.81l-3.14 2.28a1 1 0 00-.364 1.118l1.2 3.692c.3.921-.755 1.688-1.54 1.118l-3.14-2.28a1 1 0 00-1.176 0l-3.14 2.28c-.785.57-1.84-.197-1.54-1.118l1.2-3.692a1 1 0 00-.364-1.118L2.427 9.12c-.783-.57-.38-1.81.588-1.81h3.884a1 1 0 00.95-.69l1.2-3.692z" />
+            </svg>
+          ))}
+        </div>
+      )}
+
+      <label className="flex items-center mt-3 text-sm cursor-pointer">
+        <input
+          type="checkbox"
+          checked={isCompared}
+          onChange={toggleCompare}
+          className="mr-2 accent-blue-600"
+        />
+        Compare
+      </label>
     </div>
   );
 }

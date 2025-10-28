@@ -1,20 +1,42 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
-export function CompareBar({ ids }: { ids: string[] }) {
-  if (!ids || ids.length < 2) return null;
+interface CompareBarProps {
+  compareList?: string[]; // optional for safety
+}
 
-  const href = `/compare?ids=${ids.join(",")}`;
+export function CompareBar({ compareList = [] }: CompareBarProps) {
+  // ✅ Safe fallback if undefined
+  const show = compareList.length >= 2;
+  const compareUrl = `/compare?ids=${compareList.join(",")}`;
 
   return (
-    <div className="fixed right-6 bottom-6 z-50">
-      <Link
-        href={href}
-        className="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-full shadow-lg"
-      >
-        Compare Selected ({ids.length})
-      </Link>
-    </div>
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="fixed bottom-0 left-0 right-0 bg-blue-700 text-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-lg z-50"
+        >
+          <p className="text-center sm:text-left mb-2 sm:mb-0">
+            {compareList.length} model
+            {compareList.length > 1 ? "s" : ""} selected for comparison
+          </p>
+
+          <div className="flex justify-center sm:justify-end">
+            <Link
+              href={compareUrl}
+              className="bg-white text-blue-700 px-5 py-2 rounded font-semibold hover:bg-gray-100 transition"
+            >
+              Compare Selected
+            </Link>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
