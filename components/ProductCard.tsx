@@ -2,16 +2,10 @@
 
 import Link from "next/link";
 import { useCallback } from "react";
+import type { Product } from "@/types/Product"; // ✅ shared type import
 
 interface ProductCardProps {
-  product: {
-    id: string | number;
-    name: string;
-    description: string;
-    price: number;
-    image_url?: string;
-    rating?: number;
-  };
+  product: Product;
   compareList?: string[];
   setCompareList?: React.Dispatch<React.SetStateAction<string[]>>;
 }

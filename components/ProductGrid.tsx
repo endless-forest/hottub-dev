@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import type { Product } from "@/types/Product";
 import { ProductFilter } from "./ProductFilter";
 import { ProductCard } from "./ProductCard";
 import { CompareBar } from "./CompareBar";
