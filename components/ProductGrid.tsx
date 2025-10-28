@@ -32,10 +32,15 @@ export function ProductGrid() {
     fetchProducts();
   }, []);
 
-  const brands = useMemo(() => {
-    const s = new Set(products.map((p) => p.brand));
-    return Array.from(s).sort();
-  }, [products]);
+const brands = useMemo(() => {
+  const s = new Set(
+    products
+      .map((p) => p.brand)
+      .filter((b): b is string => typeof b === "string" && b.trim().length > 0)
+  );
+  return Array.from(s).sort();
+}, [products]);
+
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -92,8 +97,8 @@ export function ProductGrid() {
             <ProductCard
               key={product.id}
               product={product}
-              isCompared={compareList.includes(product.id)}
-              onToggleCompare={() => toggleCompare(product.id)}
+              compareList={compareList}
+              setCompareList={setCompareList}
             />
           ))}
         </div>

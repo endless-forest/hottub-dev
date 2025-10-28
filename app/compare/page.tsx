@@ -5,16 +5,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import type { Product } from "@/types/Product";
 
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image_url?: string;
-  rating?: number;
-}
-
 export default function ComparePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
