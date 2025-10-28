@@ -17,7 +17,7 @@ export function ProductFilter({
   brands,
   onSearchChange,
   onBrandChange,
-  onClearFilters
+  onClearFilters,
 }: FilterProps) {
   const hasActiveFilters = searchTerm || selectedBrand;
 
@@ -43,9 +43,11 @@ export function ProductFilter({
             onChange={(e) => onBrandChange(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           >
-            <option value="">All Brands</option>
-            {brands.map((brand) => (
-              <option key={brand} value={brand}>
+            <option key="all-brands" value="">
+              All Brands
+            </option>
+            {brands.map((brand, index) => (
+              <option key={`brand-${index}-${brand}`} value={brand}>
                 {brand}
               </option>
             ))}

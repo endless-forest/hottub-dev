@@ -9,8 +9,8 @@ export default function Home() {
           Santa Rosa Spas
         </h1>
         <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 leading-relaxed">
-          Relax. Renew. Restore. Explore our collection of premium hot tubs built
-          for comfort, beauty, and everyday renewal.
+          Relax. Renew. Restore. Explore our collection of premium hot tubs
+          built for comfort, beauty, and everyday renewal.
         </p>
       </section>
       <ProductGrid />
