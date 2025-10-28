@@ -19,7 +19,6 @@ export function ProductCard({ product }: { product: Product }) {
             className="w-full h-48 object-cover rounded-md transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-
         <h3 className="text-lg font-semibold mt-3 text-gray-800 group-hover:text-blue-700 transition-colors">
           {product.name}
         </h3>
@@ -32,22 +31,6 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="mt-3 text-blue-700 font-bold text-lg">
         ${product.price.toLocaleString()}
       </div>
-
-      {product.rating !== undefined && (
-        <div className="flex mt-2">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <svg
-              key={i}
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill={i < Math.round(product.rating!) ? "gold" : "#e5e7eb"}
-              className="w-4 h-4"
-            >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.2 3.692a1 1 0 00.95.69h3.884c.969 0 1.371 1.24.588 1.81l-3.14 2.28a1 1 0 00-.364 1.118l1.2 3.692c.3.921-.755 1.688-1.54 1.118l-3.14-2.28a1 1 0 00-1.176 0l-3.14 2.28c-.785.57-1.84-.197-1.54-1.118l1.2-3.692a1 1 0 00-.364-1.118L2.427 9.12c-.783-.57-.38-1.81.588-1.81h3.884a1 1 0 00.95-.69l1.2-3.692z" />
-            </svg>
-          ))}
-        </div>
-      )}
 
       <label className="flex items-center mt-3 text-sm cursor-pointer">
         <input
