@@ -3,15 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image_url?: string;
-  rating?: number;
-}
+import type { Product } from "@/types/Product";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();

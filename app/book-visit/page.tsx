@@ -158,7 +158,7 @@ export default function Booking() {
             <div>
               <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock className="w-4 h-4 inline mr-1" />
-                Preferred Time *
+                Preferred Time
               </label>
               <select
                 id="time"
@@ -194,7 +194,7 @@ export default function Booking() {
 
           <div>
             <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
-              Additional Notes <span className="text-gray-400">(optional)</span>
+              Notes <span className="text-gray-400">(optional)</span>
             </label>
             <textarea
               id="notes"
