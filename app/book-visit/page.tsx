@@ -194,7 +194,7 @@ export default function Booking() {
 
           <div>
             <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
-              Additional Notes <span className="text-gray-400">(optional)</span>
+              Notes <span className="text-gray-400">(optional)</span>
             </label>
             <textarea
               id="notes"
