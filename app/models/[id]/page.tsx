@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image"; // ✅ optimized image handling
 import { supabase } from "@/lib/supabaseClient";
 
 interface Product {
@@ -67,12 +68,17 @@ export default function ModelDetails() {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-16">
-      {/* Hero Image */}
+      {/* ✅ Optimized Hero Image */}
       <div className="relative h-[400px] w-full">
-        <img
-          src={product.image_url}
+        <Image
+          src={product.image_url || "/placeholder.jpg"}
           alt={product.name}
-          className="w-full h-full object-cover"
+          fill
+          priority
+          placeholder="blur"
+          blurDataURL="/placeholder-blur.jpg" // lightweight placeholder
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
           <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">
@@ -118,39 +124,25 @@ export default function ModelDetails() {
             <table className="w-full text-sm">
               <tbody>
                 <tr>
-                  <td className="py-2 font-medium text-gray-700">
-                    Seating Capacity
-                  </td>
-                  <td className="py-2 text-gray-600">
-                    {product.seating_capacity ?? "–"}
-                  </td>
+                  <td className="py-2 font-medium text-gray-700">Seating Capacity</td>
+                  <td className="py-2 text-gray-600">{product.seating_capacity ?? "–"}</td>
                 </tr>
                 <tr className="bg-gray-50">
                   <td className="py-2 font-medium text-gray-700">Jet Count</td>
-                  <td className="py-2 text-gray-600">
-                    {product.jet_count ?? "–"}
-                  </td>
+                  <td className="py-2 text-gray-600">{product.jet_count ?? "–"}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-medium text-gray-700">
-                    Color Options
-                  </td>
-                  <td className="py-2 text-gray-600">
-                    {product.color_options ?? "–"}
-                  </td>
+                  <td className="py-2 font-medium text-gray-700">Color Options</td>
+                  <td className="py-2 text-gray-600">{product.color_options ?? "–"}</td>
                 </tr>
                 <tr className="bg-gray-50">
                   <td className="py-2 font-medium text-gray-700">Dimensions</td>
-                  <td className="py-2 text-gray-600">
-                    {product.dimensions ?? "–"}
-                  </td>
+                  <td className="py-2 text-gray-600">{product.dimensions ?? "–"}</td>
                 </tr>
                 <tr>
                   <td className="py-2 font-medium text-gray-700">Warranty</td>
                   <td className="py-2 text-gray-600">
-                    {product.warranty_years
-                      ? `${product.warranty_years} years`
-                      : "–"}
+                    {product.warranty_years ? `${product.warranty_years} years` : "–"}
                   </td>
                 </tr>
               </tbody>

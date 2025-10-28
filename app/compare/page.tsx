@@ -2,6 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import type { Product } from "@/types/Product";
 
@@ -92,11 +93,19 @@ export default function ComparePage() {
             key={product.id}
             className="bg-white rounded-lg shadow-md p-4 flex flex-col"
           >
-            <img
-              src={product.image_url || "/placeholder.jpg"}
-              alt={product.name}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
+            <div className="relative w-full h-48 mb-4">
+              <Image
+                src={product.image_url || "/placeholder.jpg"}
+                alt={product.name}
+                fill
+                className="object-cover rounded-md"
+                sizes="(max-width: 768px) 100vw,
+                       (max-width: 1200px) 50vw,
+                       33vw"
+                priority={false}
+              />
+            </div>
+
             <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
             <p className="text-gray-600 text-sm mb-3 flex-grow">
               {product.description}
@@ -111,7 +120,7 @@ export default function ComparePage() {
         ))}
       </div>
 
-      {/* Highlights Table */}
+      {/* Feature Comparison Table */}
       <section className="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-semibold text-blue-800 mb-4 text-center">
           Feature Highlights
@@ -132,40 +141,44 @@ export default function ComparePage() {
                 ))}
               </tr>
             </thead>
-          <tbody>
-  {[
-    { label: "Price", key: "price" },
-    { label: "Rating", key: "rating" },
-    { label: "Description", key: "description" },
-    { label: "Seating Capacity", key: "seating_capacity" },
-    { label: "Jet Count", key: "jet_count" },
-    { label: "Color Options", key: "color_options" },
-    { label: "Dimensions", key: "dimensions" },
-    { label: "Warranty (years)", key: "warranty_years" },
-  ].map((feature, rowIndex) => (
-    <tr
-      key={feature.key}
-      className={rowIndex % 2 === 1 ? "bg-gray-50" : ""}
-    >
-      <td className="border-t px-4 py-2 font-medium text-gray-700">
-        {feature.label}
-      </td>
-      {products.map((p) => (
-        <td key={p.id} className="border-t px-4 py-2">
-          {feature.key === "price" && `$${p.price?.toLocaleString()}`}
-          {feature.key === "rating" && (p.rating ? `⭐ ${p.rating.toFixed(1)}` : "–")}
-          {feature.key === "description" && `${p.description.slice(0, 60)}...`}
-          {feature.key === "seating_capacity" && (p.seating_capacity ?? "–")}
-          {feature.key === "jet_count" && (p.jet_count ?? "–")}
-          {feature.key === "color_options" && (p.color_options ?? "–")}
-          {feature.key === "dimensions" && (p.dimensions ?? "–")}
-          {feature.key === "warranty_years" && (p.warranty_years ?? "–")}
-        </td>
-      ))}
-    </tr>
-  ))}
-</tbody>
-
+            <tbody>
+              {[
+                { label: "Price", key: "price" },
+                { label: "Rating", key: "rating" },
+                { label: "Description", key: "description" },
+                { label: "Seating Capacity", key: "seating_capacity" },
+                { label: "Jet Count", key: "jet_count" },
+                { label: "Color Options", key: "color_options" },
+                { label: "Dimensions", key: "dimensions" },
+                { label: "Warranty (years)", key: "warranty_years" },
+              ].map((feature, rowIndex) => (
+                <tr
+                  key={feature.key}
+                  className={rowIndex % 2 === 1 ? "bg-gray-50" : ""}
+                >
+                  <td className="border-t px-4 py-2 font-medium text-gray-700">
+                    {feature.label}
+                  </td>
+                  {products.map((p) => (
+                    <td key={p.id} className="border-t px-4 py-2">
+                      {feature.key === "price" && `$${p.price?.toLocaleString()}`}
+                      {feature.key === "rating" &&
+                        (p.rating ? `⭐ ${p.rating.toFixed(1)}` : "–")}
+                      {feature.key === "description" &&
+                        `${p.description.slice(0, 60)}...`}
+                      {feature.key === "seating_capacity" &&
+                        (p.seating_capacity ?? "–")}
+                      {feature.key === "jet_count" && (p.jet_count ?? "–")}
+                      {feature.key === "color_options" &&
+                        (p.color_options ?? "–")}
+                      {feature.key === "dimensions" && (p.dimensions ?? "–")}
+                      {feature.key === "warranty_years" &&
+                        (p.warranty_years ?? "–")}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </section>

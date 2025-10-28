@@ -1,32 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Layout } from "@/components/Layout";
 
 export default function Contact() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const modelName = searchParams.get("model");
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    message: modelName ? `I'm interested in the ${modelName}. ` : ""
+    message: modelName ? `I&apos;m interested in the ${modelName}. ` : "",
   });
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (modelName) {
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
-        message: `I'm interested in the ${modelName}. `
+        message: `I&apos;m interested in the ${modelName}. `,
       }));
     }
   }, [modelName]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -36,25 +39,33 @@ export default function Contact() {
     setStatus("Sending...");
 
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/submitLead`;
-
-      const response = await fetch(apiUrl, {
+      // 1️⃣ Save lead in Supabase
+      const dbUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/submitLead`;
+      const response = await fetch(dbUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify(form),
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to submit");
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to submit");
-      }
+      // 2️⃣ Send email confirmation via Edge Function
+      await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-lead-confirmation`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }
+      );
 
-      setStatus("Message sent! We'll get back to you soon.");
-      setForm({ name: "", email: "", phone: "", message: "" });
+      // 3️⃣ Redirect to thank-you page
+      router.push("/thank-you");
+
     } catch (error) {
       console.error("Submission error:", error);
       setStatus("Error. Please try again.");
@@ -72,11 +83,15 @@ export default function Contact() {
         >
           <h2 className="text-3xl font-bold mb-4 text-blue-800">Contact Us</h2>
           <p className="text-gray-600 mb-6">
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll
+            respond as soon as possible.
           </p>
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Your Name
             </label>
             <input
@@ -91,7 +106,10 @@ export default function Contact() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Email Address
             </label>
             <input
@@ -107,7 +125,10 @@ export default function Contact() {
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Phone Number <span className="text-gray-400">(optional)</span>
             </label>
             <input
@@ -122,13 +143,16 @@ export default function Contact() {
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Message
             </label>
             <textarea
               id="message"
               name="message"
-              placeholder="Tell us what you're looking for..."
+              placeholder="Tell us what you&apos;re looking for..."
               value={form.message}
               onChange={handleChange}
               rows={5}
@@ -146,7 +170,11 @@ export default function Contact() {
           </button>
 
           {status && (
-            <p className={`text-sm text-center ${status.includes("Error") ? "text-red-600" : "text-green-600"}`}>
+            <p
+              className={`text-sm text-center ${
+                status.includes("Error") ? "text-red-600" : "text-green-600"
+              }`}
+            >
               {status}
             </p>
           )}
