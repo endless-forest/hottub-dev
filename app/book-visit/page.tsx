@@ -25,11 +25,18 @@ export default function Booking() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const timeSlots = [
-    "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-    "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
+    "9:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM",
+    "1:00 PM",
+    "2:00 PM",
+    "3:00 PM",
+    "4:00 PM",
+    "5:00 PM",
   ];
 
-  // ✅ Auto-fill "Model of Interest" from URL param
+  // ✅ Prefill model from query param
   useEffect(() => {
     if (modelFromUrl) {
       setForm((prev) => ({ ...prev, model_interest: modelFromUrl }));
@@ -37,7 +44,9 @@ export default function Booking() {
   }, [modelFromUrl]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -45,26 +54,37 @@ export default function Booking() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setStatus("Booking...");
+    setStatus("Booking your appointment...");
 
     try {
-      // 1️⃣ Insert appointment into Supabase
+      // 1️⃣ Save appointment to Supabase
       const { error } = await supabase.from("appointments").insert([form]);
       if (error) throw error;
 
-      // 2️⃣ Trigger confirmation email via Supabase Edge Function
-      await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-confirmation-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      // 2️⃣ Send confirmation email via Edge Function
+      const emailResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-confirmation-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(form),
+        }
+      );
+
+      if (!emailResponse.ok) {
+        console.warn("Email not sent (non-fatal):", await emailResponse.text());
+      }
 
       // 3️⃣ Redirect to thank-you page
       router.push("/thank-you");
-
-    } catch (error) {
-      console.error("Booking error:", error);
-      setStatus("Error booking appointment. Please try again.");
+    } catch (err) {
+      console.error("Booking error:", err);
+      setStatus(
+        "❌ There was a problem booking your appointment. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -80,8 +100,9 @@ export default function Booking() {
             Book a Showroom Visit
           </h1>
           <p className="text-lg text-gray-600">
-            Schedule a time to visit our showroom and experience our hot tubs in person.
-            Our expert team will guide you through the selection process.
+            Schedule a time to visit our showroom and experience our hot tubs in
+            person. Our expert team will guide you through the selection
+            process.
           </p>
         </div>
 
@@ -91,31 +112,37 @@ export default function Booking() {
         >
           <div className="grid md:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Your Name *
               </label>
               <input
                 id="name"
                 name="name"
-                placeholder="John Doe"
                 value={form.name}
                 onChange={handleChange}
+                placeholder="John Doe"
                 className="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address *
               </label>
               <input
                 id="email"
                 type="email"
                 name="email"
-                placeholder="john@example.com"
                 value={form.email}
                 onChange={handleChange}
+                placeholder="john@example.com"
                 className="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 required
               />
@@ -123,23 +150,29 @@ export default function Booking() {
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Phone Number
             </label>
             <input
               id="phone"
               type="tel"
               name="phone"
-              placeholder="(707) 555-1234"
               value={form.phone}
               onChange={handleChange}
+              placeholder="(707) 555-1234"
               className="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
             />
           </div>
 
           <div className="grid md:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="date"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 <Calendar className="w-4 h-4 inline mr-1" />
                 Preferred Date *
               </label>
@@ -156,9 +189,12 @@ export default function Booking() {
             </div>
 
             <div>
-              <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="time"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 <Clock className="w-4 h-4 inline mr-1" />
-                Preferred Time
+                Preferred Time *
               </label>
               <select
                 id="time"
@@ -179,29 +215,36 @@ export default function Booking() {
           </div>
 
           <div>
-            <label htmlFor="model_interest" className="block text-sm font-medium text-gray-700 mb-2">
-              Model of Interest <span className="text-gray-400">(optional)</span>
+            <label
+              htmlFor="model_interest"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Model of Interest{" "}
+              <span className="text-gray-400">(optional)</span>
             </label>
             <input
               id="model_interest"
               name="model_interest"
-              placeholder="e.g., Serenity 4000"
               value={form.model_interest}
               onChange={handleChange}
+              placeholder="e.g., Serenity 4000"
               className="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
             />
           </div>
 
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
-              Notes <span className="text-gray-400">(optional)</span>
+            <label
+              htmlFor="notes"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Additional Notes <span className="text-gray-400">(optional)</span>
             </label>
             <textarea
               id="notes"
               name="notes"
-              placeholder="Any specific questions or requirements?"
               value={form.notes}
               onChange={handleChange}
+              placeholder="Any specific questions or requirements?"
               rows={4}
               className="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
             />
@@ -235,15 +278,22 @@ export default function Booking() {
             </li>
             <li className="flex items-start">
               <span className="text-blue-600 font-bold mr-2">•</span>
-              <span>Get expert advice on choosing the right hot tub for your needs</span>
+              <span>
+                Get expert advice on choosing the right spa for your needs
+              </span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-600 font-bold mr-2">•</span>
-              <span>Discuss installation, maintenance, and financing options</span>
+              <span>
+                Discuss installation, maintenance, and financing options
+              </span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-600 font-bold mr-2">•</span>
-              <span>No pressure - just helpful guidance and answers to your questions</span>
+              <span>
+                No pressure — just helpful guidance and answers to your
+                questions
+              </span>
             </li>
           </ul>
         </div>
