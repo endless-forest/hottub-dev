@@ -235,7 +235,7 @@ export default function Booking() {
             </li>
             <li className="flex items-start">
               <span className="text-blue-600 font-bold mr-2">•</span>
-              <span>Get expert advice on choosing the right spa for your needs</span>
+              <span>Get expert advice on choosing the right hot tub for your needs</span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-600 font-bold mr-2">•</span>
