@@ -7,14 +7,17 @@ import { ProductCard } from "./ProductCard";
 import { CompareBar } from "./CompareBar";
 
 interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  description: string;
-  price?: string | null;
-  price_range?: string | null;
-  rating?: number | null;
-  image_url: string;
+  id: string
+  name: string
+  description: string
+  price: number
+  image_url?: string
+  rating?: number
+  seating_capacity?: number | string
+  jet_count?: number | string
+  color_options?: string
+  dimensions?: string
+  warranty_years?: number | string
 }
 
 export function ProductGrid() {
