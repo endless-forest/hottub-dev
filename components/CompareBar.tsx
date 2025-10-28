@@ -2,12 +2,14 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useCompare } from "@/context/CompareContext";
 
-export function CompareBar() {
-  const { compareList, clearAll } = useCompare();
-  const show = compareList.length >= 2;
-  const compareUrl = `/compare?ids=${compareList.join(",")}`;
+interface CompareBarProps {
+  ids: string[];
+}
+
+export function CompareBar({ ids }: CompareBarProps) {
+  const show = ids && ids.length >= 2;
+  const compareUrl = `/compare?ids=${ids.join(",")}`;
 
   return (
     <AnimatePresence>
@@ -20,23 +22,16 @@ export function CompareBar() {
           className="fixed bottom-0 left-0 right-0 bg-blue-700 text-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-lg z-50"
         >
           <p className="text-center sm:text-left mb-2 sm:mb-0">
-            {compareList.length} model
-            {compareList.length > 1 ? "s" : ""} selected for comparison
+            {ids.length} model{ids.length > 1 ? "s" : ""} selected for comparison
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-end">
+          <div className="flex justify-center sm:justify-end">
             <Link
               href={compareUrl}
-              className="bg-white text-blue-700 px-5 py-2 rounded font-semibold hover:bg-gray-100 transition text-center"
+              className="bg-white text-blue-700 px-5 py-2 rounded font-semibold hover:bg-gray-100 transition"
             >
               Compare Selected
             </Link>
-            <button
-              onClick={clearAll}
-              className="bg-transparent border border-white px-4 py-2 rounded font-semibold hover:bg-white hover:text-blue-700 transition text-center"
-            >
-              Clear All
-            </button>
           </div>
         </motion.div>
       )}

@@ -122,7 +122,7 @@ export function ProductGrid() {
         </div>
       </div>
 
-      <CompareBar />
+      <CompareBar ids={compareList} />
     </section>
   );
 }
