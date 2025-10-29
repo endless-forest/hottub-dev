@@ -2,14 +2,12 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useCompare } from "@/context/CompareContext";
 
-interface CompareBarProps {
-  ids: string[];
-}
-
-export function CompareBar({ ids }: CompareBarProps) {
-  const show = ids && ids.length >= 2;
-  const compareUrl = `/compare?ids=${ids.join(",")}`;
+export function CompareBar() {
+  const { compareList } = useCompare();
+  const show = compareList.length >= 2;
+  const compareUrl = `/compare?ids=${compareList.join(",")}`;
 
   return (
     <AnimatePresence>
@@ -22,7 +20,8 @@ export function CompareBar({ ids }: CompareBarProps) {
           className="fixed bottom-0 left-0 right-0 bg-blue-700 text-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-lg z-50"
         >
           <p className="text-center sm:text-left mb-2 sm:mb-0">
-            {ids.length} model{ids.length > 1 ? "s" : ""} selected for comparison
+            {compareList.length} model
+            {compareList.length > 1 ? "s" : ""} selected for comparison
           </p>
 
           <div className="flex justify-center sm:justify-end">
