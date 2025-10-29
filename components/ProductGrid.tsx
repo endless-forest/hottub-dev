@@ -11,7 +11,6 @@ export function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBrand, setSelectedBrand] = useState("");
-  const [compareList, setCompareList] = useState<string[]>([]);
 
   // Fetch products from Supabase
   useEffect(() => {
@@ -21,11 +20,8 @@ export function ProductGrid() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching products:", error);
-      } else {
-        setProducts((data as Product[]) || []);
-      }
+      if (error) console.error("Error fetching products:", error);
+      setProducts((data as Product[]) || []);
       setLoading(false);
     };
 
@@ -55,12 +51,6 @@ export function ProductGrid() {
     setSelectedBrand("");
   };
 
-  const toggleCompare = (id: string) => {
-    setCompareList((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
   if (loading) {
     return (
       <section className="px-6 pb-12 text-center">
@@ -85,17 +75,12 @@ export function ProductGrid() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              compareList={compareList}
-              setCompareList={setCompareList}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
 
-      <CompareBar ids={compareList} />
+      <CompareBar />
     </section>
   );
 }
