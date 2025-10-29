@@ -3,12 +3,14 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  image_url?: string;
-  rating?: number;
-  seating_capacity?: number | string;
-  jet_count?: number | string;
-  color_options?: string;
-  dimensions?: string;
-  warranty_years?: number | string;
-  brand?: string;
+  brand?: string | null;
+  image_url?: string | null;
+  storage_path?: string | null;     // path in product-images bucket
+  gallery_paths?: string[] | null;  // array of paths in product-images bucket
+  rating?: number | null;
+  seating_capacity?: number | null;
+  jet_count?: number | null;
+  color_options?: string | null;
+  dimensions?: string | null;
+  warranty_years?: number | null;
 }

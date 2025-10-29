@@ -5,21 +5,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useSwipeable } from "react-swipeable";
 import { supabase } from "@/lib/supabaseClient";
-
-type Product = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image_url?: string | null;
-  rating?: number | null;
-  seating_capacity?: number | null;
-  jet_count?: number | null;
-  color_options?: string | null;
-  dimensions?: string | null;
-  warranty_years?: number | null;
-  image_gallery?: string[] | null;
-};
+import type { Product } from "@/types/Product";
+import { getPublicUrl } from "@/lib/getPublicUrl";
 
 export default function ModelDetails() {
   const { id } = useParams();
@@ -30,36 +17,31 @@ export default function ModelDetails() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Fetch the product
+  // Fetch product
   useEffect(() => {
-    async function fetchProduct() {
+    (async () => {
       if (!id) return;
       const { data, error } = await supabase
         .from("products")
         .select("*")
         .eq("id", id)
         .single();
-
       if (error) console.error("Error fetching product:", error);
-      setProduct(data);
+      setProduct(data as Product | null);
       setLoading(false);
-    }
-    fetchProduct();
+    })();
   }, [id]);
 
-  // Always build at least one image (so thumbnails render)
-  const images = useMemo(() => {
-    const gallery =
-      Array.isArray(product?.image_gallery) && product?.image_gallery.length
-        ? product.image_gallery
-        : [];
-    const mainImage = product?.image_url
-      ? [product.image_url]
-      : ["/placeholder.jpg"];
-    return [...gallery, ...mainImage];
-  }, [product]);
 
-  // Preload next and previous
+const images = useMemo(() => {
+  const gallery = (product?.gallery_paths ?? []) as string[];
+  const urls = gallery.map((path) => getPublicUrl(path));
+  const main = getPublicUrl(product?.storage_path);
+  return [main, ...urls];
+}, [product]);
+
+
+  // Preload neighbors when modal is open or index changes
   useEffect(() => {
     if (typeof document === "undefined" || images.length < 2) return;
     const preload = (src: string) => {
@@ -88,32 +70,34 @@ export default function ModelDetails() {
     setCurrentIndex((i) => (i - 1 + images.length) % images.length);
   }, [images.length]);
 
-  // Keyboard support
+  // Keyboard support in modal
   useEffect(() => {
     if (!isModalOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") handleNext();
       if (e.key === "ArrowLeft") handlePrev();
       if (e.key === "Escape") setModalOpen(false);
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [isModalOpen, handleNext, handlePrev]);
 
+  // Swipe support in modal
   const swipeHandlers = useSwipeable({
     onSwipedLeft: handleNext,
     onSwipedRight: handlePrev,
     trackMouse: true,
   });
 
-  if (loading)
+  if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center text-gray-600">
         Loading model details...
       </main>
     );
+  }
 
-  if (!product)
+  if (!product) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center text-center">
         <p className="text-gray-600 mb-4">Model not found.</p>
@@ -125,13 +109,14 @@ export default function ModelDetails() {
         </button>
       </main>
     );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 pb-16">
       {/* Hero */}
       <div className="relative h-[40vh] w-full">
         <Image
-          src={images[0]}
+          src={images[0] || "/placeholder.jpg"}
           alt={product.name}
           fill
           priority
@@ -147,26 +132,25 @@ export default function ModelDetails() {
 
       {/* Main */}
       <section className="max-w-6xl mx-auto mt-10 px-4 grid lg:grid-cols-2 gap-[clamp(1.25rem,3vw,2.5rem)] items-start">
-        {/* Image viewer with thumbnails */}
+        {/* Image viewer + thumbnails */}
         <div className="flex flex-col gap-4">
           <div
             onClick={() => setModalOpen(true)}
             className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg group cursor-zoom-in"
           >
             <Image
-              src={images[currentIndex]}
-              alt={`${product.name} main image`}
+              src={images[currentIndex] || "/placeholder.jpg"}
+              alt={`${product.name} image ${currentIndex + 1}`}
               fill
               sizes="(max-width: 1024px) 100vw, 600px"
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </div>
 
-          {/* ✅ Always render thumbnails */}
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
             {images.map((src, idx) => (
               <button
-                key={src + idx}
+                key={`${src}-${idx}`}
                 onClick={() => setCurrentIndex(idx)}
                 className={`relative flex-shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-all ${
                   idx === currentIndex
@@ -220,25 +204,39 @@ export default function ModelDetails() {
             <table className="w-full text-sm">
               <tbody>
                 <tr>
-                  <td className="py-2 font-medium text-gray-700">Seating Capacity</td>
-                  <td className="py-2 text-gray-600">{product.seating_capacity ?? "–"}</td>
+                  <td className="py-2 font-medium text-gray-700">
+                    Seating Capacity
+                  </td>
+                  <td className="py-2 text-gray-600">
+                    {product.seating_capacity ?? "–"}
+                  </td>
                 </tr>
                 <tr className="bg-gray-50">
                   <td className="py-2 font-medium text-gray-700">Jet Count</td>
-                  <td className="py-2 text-gray-600">{product.jet_count ?? "–"}</td>
+                  <td className="py-2 text-gray-600">
+                    {product.jet_count ?? "–"}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-medium text-gray-700">Color Options</td>
-                  <td className="py-2 text-gray-600">{product.color_options ?? "–"}</td>
+                  <td className="py-2 font-medium text-gray-700">
+                    Color Options
+                  </td>
+                  <td className="py-2 text-gray-600">
+                    {product.color_options ?? "–"}
+                  </td>
                 </tr>
                 <tr className="bg-gray-50">
                   <td className="py-2 font-medium text-gray-700">Dimensions</td>
-                  <td className="py-2 text-gray-600">{product.dimensions ?? "–"}</td>
+                  <td className="py-2 text-gray-600">
+                    {product.dimensions ?? "–"}
+                  </td>
                 </tr>
                 <tr>
                   <td className="py-2 font-medium text-gray-700">Warranty</td>
                   <td className="py-2 text-gray-600">
-                    {product.warranty_years ? `${product.warranty_years} years` : "–"}
+                    {product.warranty_years
+                      ? `${product.warranty_years} years`
+                      : "–"}
                   </td>
                 </tr>
               </tbody>
@@ -269,7 +267,7 @@ export default function ModelDetails() {
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={images[currentIndex]}
+              src={images[currentIndex] || "/placeholder.jpg"}
               alt={`${product.name} – image ${currentIndex + 1}`}
               fill
               className="object-contain select-none"

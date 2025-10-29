@@ -95,7 +95,10 @@ export default function ComparePage() {
           >
             <div className="relative w-full aspect-[4/3] mb-4 rounded-md overflow-hidden">
               <Image
-                src={product.image_url || "/placeholder.jpg"}
+                src={
+                  product.getPublicUrl(product.storage_path) ||
+                  "/placeholder.jpg"
+                }
                 alt={product.name}
                 fill
                 sizes="(max-width: 1024px) 100vw, 400px"
