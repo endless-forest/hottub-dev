@@ -1,17 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
-    domains: [
-      "images.pexels.com",
-      "images.unsplash.com",
-      "picsum.photos",
-      "example.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.pixabay.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com", // ✅ add this one
+      },
+      {
+        protocol: "https",
+        hostname: "example.com", // optional, if you host your own
+      },
     ],
   },
-  trailingSlash: true,
 };
 
 module.exports = nextConfig;
