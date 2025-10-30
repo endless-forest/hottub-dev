@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import { HotTubGuideChat } from "@/components/HotTubGuideChat";
+
+import { getPublicUrl } from "@/lib/getPublicUrl";
+
+const faqHero = getPublicUrl("faq/faq-hero.jpg", "site-images");
 
 const faqs = [
   {
@@ -46,9 +51,12 @@ export default function FAQPage() {
 
       <main className="flex-1">
         <section className="bg-gradient-to-b from-blue-700 to-blue-500 text-white py-20 px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Frequently Asked Questions
+          </h1>
           <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
-            Find quick answers about our hot tubs, services, and showroom experience.
+            Find quick answers about our hot tubs, services, and showroom
+            experience.
           </p>
         </section>
 
@@ -90,11 +98,10 @@ export default function FAQPage() {
         </section>
 
         <section className="bg-blue-700 text-white text-center py-12 px-6">
-          <h2 className="text-3xl font-semibold mb-4">
-            Still have questions?
-          </h2>
+          <h2 className="text-3xl font-semibold mb-4">Still have questions?</h2>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            We&apos;re always here to help. Reach out through our contact form or start a live chat with one of our team members.
+            We&apos;re always here to help. Reach out through our contact form
+            or start a live chat with one of our team members.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a
@@ -111,6 +118,15 @@ export default function FAQPage() {
             </a>
           </div>
         </section>
+        <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-xl overflow-hidden shadow-lg mb-8 mt-10">
+          <Image
+            src={faqHero}
+            alt="Hot tub sunset"
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
       </main>
 
       <HotTubGuideChat />

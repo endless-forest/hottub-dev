@@ -11,6 +11,8 @@ async function getFeaturedModels() {
   return data || [];
 }
 
+const heroHotTub = getPublicUrl("home/hero-hot-tub.jpg", "site-images");
+
 export default async function Home() {
   const featured = await getFeaturedModels();
 
@@ -23,12 +25,14 @@ export default async function Home() {
       <section className="bg-gradient-to-b from-blue-50 to-white py-20 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
-            <Image
-              src="https://images.pexels.com/photos/3823207/pexels-photo-3823207.jpeg"
-              alt="Santa Rosa Hot Tub Showroom"
-              fill
-              className="object-cover"
-            />
+           <Image
+          src={heroHotTub}
+          alt="Relaxing hot tub deck"
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover"
+        />
           </div>
           <div>
             <h2 className="text-3xl md:text-4xl font-semibold text-blue-800 mb-4">
