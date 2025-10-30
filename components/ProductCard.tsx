@@ -2,58 +2,60 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import type { Product } from "@/types/Product";
+import { getPublicUrl } from "@/lib/getPublicUrl";
 import { useCompare } from "@/context/CompareContext";
 
 export function ProductCard({ product }: { product: Product }) {
-  const { isCompared, toggleCompare } = useCompare();
-  const id = product.id?.toString();
+  const imageUrl = getPublicUrl(product.storage_path);
+  const { toggleCompare, isCompared } = useCompare();
+
+  const isChecked = isCompared(product.id.toString());
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      viewport={{ once: true }}
-    >
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="bg-white rounded-lg shadow hover:shadow-lg transition transform p-4 flex flex-col justify-between"
+    <div className="group bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all">
+      {/* Card clickable section */}
+      <Link
+        href={`/models/${product.id}`}
+        className="block"
       >
-        <Link href={`/models/${id}`} className="block group">
-          <div className="overflow-hidden rounded-md">
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <Image
-                src={product.image_url || "/placeholder.jpg"}
-                alt={product.name}
-                width={400}
-                height={300}
-                className="w-full h-48 object-cover rounded-md"
-              />
-            </motion.div>
-          </div>
-          <h3 className="text-lg font-semibold mt-3 text-gray-800 group-hover:text-blue-700 transition-colors">
-            {product.name}
-          </h3>
-        </Link>
-
-        <p className="text-gray-600 text-sm flex-grow mt-1">{product.description}</p>
-
-        <div className="mt-3 text-blue-700 font-bold text-lg">
-          ${product.price.toLocaleString()}
+        <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden mb-3">
+          <Image
+            src={imageUrl}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
         </div>
 
-        <label className="flex items-center mt-3 text-sm cursor-pointer">
+        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-700">
+          {product.name}
+        </h3>
+
+        <p className="text-gray-600 text-sm line-clamp-2 mb-2">
+          {product.description}
+        </p>
+
+        <p className="text-blue-700 font-bold mb-3">
+          ${product.price.toLocaleString()}
+        </p>
+      </Link>
+
+      {/* ✅ Compare Checkbox */}
+      <div className="flex items-center justify-center mt-1">
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
           <input
             type="checkbox"
-            checked={isCompared(id!)}
-            onChange={() => toggleCompare(id!)}
-            className="mr-2 accent-blue-600"
+            checked={isChecked}
+            onChange={() => toggleCompare(product.id.toString())}
+            className="w-4 h-4 text-blue-700 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
           />
-          Compare
+          <span className={`${isChecked ? "text-blue-700 font-medium" : ""}`}>
+            {isChecked ? "Added to Compare" : "Compare"}
+          </span>
         </label>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

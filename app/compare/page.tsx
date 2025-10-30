@@ -3,10 +3,10 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import type { Product } from "@/types/Product";
-import Link from "next/link";
+import { getPublicUrl } from "@/lib/getPublicUrl";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();
@@ -95,7 +95,7 @@ export default function ComparePage() {
           >
             <div className="relative w-full aspect-[4/3] mb-4 rounded-md overflow-hidden">
               <Image
-                src={product.image_url || "/placeholder.jpg"}
+                src={getPublicUrl(product.storage_path) || "/placeholder.jpg"}
                 alt={product.name}
                 fill
                 sizes="(max-width: 1024px) 100vw, 400px"
