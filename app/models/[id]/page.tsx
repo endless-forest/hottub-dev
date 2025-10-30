@@ -7,6 +7,7 @@ import { useSwipeable } from "react-swipeable";
 import { supabase } from "@/lib/supabaseClient";
 import type { Product } from "@/types/Product";
 import { getPublicUrl } from "@/lib/getPublicUrl";
+import { HotTubGuideChat } from "@/components/HotTubGuideChat";
 
 export default function ModelDetails() {
   const { id } = useParams();
@@ -32,14 +33,12 @@ export default function ModelDetails() {
     })();
   }, [id]);
 
-
-const images = useMemo(() => {
-  const gallery = (product?.gallery_paths ?? []) as string[];
-  const urls = gallery.map((path) => getPublicUrl(path));
-  const main = getPublicUrl(product?.storage_path);
-  return [main, ...urls];
-}, [product]);
-
+  const images = useMemo(() => {
+    const gallery = (product?.gallery_paths ?? []) as string[];
+    const urls = gallery.map((path) => getPublicUrl(path));
+    const main = getPublicUrl(product?.storage_path);
+    return [main, ...urls];
+  }, [product]);
 
   // Preload neighbors when modal is open or index changes
   useEffect(() => {
@@ -302,6 +301,7 @@ const images = useMemo(() => {
           </button>
         </div>
       )}
+      <HotTubGuideChat />
     </main>
   );
 }
