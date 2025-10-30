@@ -24,7 +24,7 @@ export function NavBar() {
             href="/models"
             className="hover:text-blue-700 transition-colors"
           >
-            Models
+            Hot Tubs
           </Link>
           <Link href="/about" className="hover:text-blue-700 transition-colors">
             About
