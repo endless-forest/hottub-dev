@@ -42,11 +42,9 @@ export default function FAQPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* ✅ NavBar */}
       <NavBar />
 
       <main className="flex-1">
-        {/* ===== Hero Section ===== */}
         <section className="bg-gradient-to-b from-blue-700 to-blue-500 text-white py-20 px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
           <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
@@ -54,7 +52,6 @@ export default function FAQPage() {
           </p>
         </section>
 
-        {/* ===== FAQ Section ===== */}
         <section className="px-6 py-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-semibold text-blue-800 mb-10 text-center">
             Your Questions, Answered
@@ -92,13 +89,12 @@ export default function FAQPage() {
           </div>
         </section>
 
-        {/* ===== CTA Section ===== */}
         <section className="bg-blue-700 text-white text-center py-12 px-6">
           <h2 className="text-3xl font-semibold mb-4">
             Still have questions?
           </h2>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            We're always here to help. Reach out through our contact form or start a live chat with one of our team members.
+            We&apos;re always here to help. Reach out through our contact form or start a live chat with one of our team members.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a
@@ -117,7 +113,6 @@ export default function FAQPage() {
         </section>
       </main>
 
-      {/* ✅ Floating AI Chat + Footer */}
       <HotTubGuideChat />
       <Footer />
     </div>

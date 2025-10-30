@@ -1,48 +1,106 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export function NavBar() {
-  // Enable smooth scrolling globally
-  useEffect(() => {
-    document.documentElement.style.scrollBehavior = "smooth";
-  }, []);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+  const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+    <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+        {/* Logo */}
         <Link
           href="/"
-          className="text-xl font-bold text-blue-800 hover:text-blue-900"
+          className="text-2xl font-bold text-blue-800 hover:text-blue-900 transition"
+          onClick={closeMenu}
         >
           Santa Rosa Spas
         </Link>
 
-        <div className="space-x-6 text-sm font-medium text-gray-700 hidden md:flex">
-          <Link
-            href="/models"
-            className="hover:text-blue-700 transition-colors"
-          >
+        {/* Desktop Nav */}
+        <div className="hidden md:flex space-x-8 text-gray-700 font-medium">
+          <Link href="/" className="hover:text-blue-700 transition">
+            Home
+          </Link>
+          <Link href="/models" className="hover:text-blue-700 transition">
             Hot Tubs
           </Link>
-          <Link href="/about" className="hover:text-blue-700 transition-colors">
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className="hover:text-blue-700 transition-colors"
-          >
-            Contact
-          </Link>
-          <Link
-            href="/book-visit"
-            className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md transition"
-          >
+          <Link href="/book-visit" className="hover:text-blue-700 transition">
             Book Visit
           </Link>
+          <Link href="/about" className="hover:text-blue-700 transition">
+            About
+          </Link>
+          <Link href="/contact" className="hover:text-blue-700 transition">
+            Contact
+          </Link>
+          {/* ✅ New FAQ link */}
+          <Link href="/faq" className="hover:text-blue-700 transition">
+            FAQ
+          </Link>
         </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-blue-800 focus:outline-none"
+          onClick={toggleMenu}
+          aria-label="Toggle navigation menu"
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {/* Mobile Nav */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="flex flex-col space-y-3 px-6 py-4 text-gray-700 font-medium">
+            <Link href="/" onClick={closeMenu} className="hover:text-blue-700">
+              Home
+            </Link>
+            <Link
+              href="/models"
+              onClick={closeMenu}
+              className="hover:text-blue-700"
+            >
+              Hot Tubs
+            </Link>
+            <Link
+              href="/book-visit"
+              onClick={closeMenu}
+              className="hover:text-blue-700"
+            >
+              Book Visit
+            </Link>
+            <Link
+              href="/about"
+              onClick={closeMenu}
+              className="hover:text-blue-700"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              onClick={closeMenu}
+              className="hover:text-blue-700"
+            >
+              Contact
+            </Link>
+            {/* ✅ FAQ in mobile view too */}
+            <Link
+              href="/faq"
+              onClick={closeMenu}
+              className="hover:text-blue-700"
+            >
+              FAQ
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

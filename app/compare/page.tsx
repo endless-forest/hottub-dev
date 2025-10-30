@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
@@ -15,12 +15,16 @@ export default function ComparePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const idsParam = searchParams.get("ids");
-  const ids = idsParam
-    ? idsParam
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean)
-    : [];
+
+  // ✅ Memoized IDs so React doesn't warn about dependency changes
+  const ids = useMemo(() => {
+    return idsParam
+      ? idsParam
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean)
+      : [];
+  }, [idsParam]);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,11 +77,9 @@ export default function ComparePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* ✅ NavBar added */}
       <NavBar />
 
       <main className="flex-1 py-[clamp(2rem,5vw,5rem)] px-[clamp(1rem,4vw,3rem)]">
-        {/* Header */}
         <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 py-4 mb-8">
           <div className="max-w-[90rem] mx-auto flex justify-between items-center px-[clamp(1rem,3vw,2rem)]">
             <h1 className="text-[clamp(1.5rem,2vw,2.5rem)] font-bold text-blue-800">
@@ -92,7 +94,6 @@ export default function ComparePage() {
           </div>
         </div>
 
-        {/* Product Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[clamp(1rem,2vw,2rem)] max-w-[90rem] mx-auto mb-[clamp(2rem,4vw,3rem)]">
           {products.map((product) => (
             <Link
@@ -131,7 +132,6 @@ export default function ComparePage() {
           ))}
         </div>
 
-        {/* Comparison Table */}
         <section className="max-w-[90rem] mx-auto bg-white shadow-lg rounded-2xl p-[clamp(1.5rem,3vw,2.5rem)]">
           <h2 className="text-[clamp(1.5rem,2vw,2rem)] font-semibold text-blue-800 mb-6 text-center">
             Feature Highlights
@@ -150,9 +150,7 @@ export default function ComparePage() {
                       {p.name}
                       <div>
                         <a
-                          href={`/book-visit?model=${encodeURIComponent(
-                            p.name
-                          )}`}
+                          href={`/book-visit?model=${encodeURIComponent(p.name)}`}
                           className="text-xs text-blue-600 hover:underline"
                         >
                           Book Visit →
@@ -181,12 +179,10 @@ export default function ComparePage() {
                     </td>
                     {products.map((p) => (
                       <td key={p.id} className="border-t px-4 py-3 text-gray-800">
-                        {feature.key === "price" &&
-                          `$${p.price.toLocaleString()}`}
+                        {feature.key === "price" && `$${p.price.toLocaleString()}`}
                         {feature.key === "rating" &&
                           (p.rating ? `⭐ ${p.rating.toFixed(1)}` : "–")}
-                        {feature.key === "seating_capacity" &&
-                          p.seating_capacity}
+                        {feature.key === "seating_capacity" && p.seating_capacity}
                         {feature.key === "jet_count" && p.jet_count}
                         {feature.key === "color_options" && p.color_options}
                         {feature.key === "dimensions" && p.dimensions}
@@ -201,7 +197,6 @@ export default function ComparePage() {
         </section>
       </main>
 
-      {/* ✅ Floating Chat + Footer */}
       <HotTubGuideChat />
       <Footer />
     </div>
