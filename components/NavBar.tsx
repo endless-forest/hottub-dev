@@ -12,7 +12,7 @@ export function NavBar() {
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => setIsOpen(false);
 
-  // ✅ Active highlight supports nested routes (e.g. /models/123)
+  // ✅ Highlight active route (supports nested paths like /models/123)
   const isActive = (path: string) =>
     pathname === path || pathname.startsWith(path + "/");
 
@@ -26,7 +26,7 @@ export function NavBar() {
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-        {/* Logo */}
+        {/* ===== Logo ===== */}
         <Link
           href="/"
           className="text-2xl font-bold text-blue-800 hover:text-blue-900 transition"
@@ -35,7 +35,7 @@ export function NavBar() {
           Santa Rosa Spas
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* ===== Desktop Navigation ===== */}
         <div className="hidden md:flex space-x-8 font-medium items-center">
           <Link href="/" className={linkClass("/")}>
             Home
@@ -45,6 +45,9 @@ export function NavBar() {
           </Link>
           <Link href="/book-visit" className={linkClass("/book-visit")}>
             Book Visit
+          </Link>
+          <Link href="/guide-care" className={linkClass("/guide-care")}>
+            Guide & Care
           </Link>
           <Link href="/testimonials" className={linkClass("/testimonials")}>
             Testimonials
@@ -60,7 +63,7 @@ export function NavBar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* ===== Mobile Menu Button ===== */}
         <button
           className="md:hidden text-blue-800 focus:outline-none"
           onClick={toggleMenu}
@@ -70,18 +73,33 @@ export function NavBar() {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* ===== Mobile Navigation Drawer ===== */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="flex flex-col space-y-3 px-6 py-4 font-medium">
             <Link href="/" onClick={closeMenu} className={linkClass("/")}>
               Home
             </Link>
-            <Link href="/models" onClick={closeMenu} className={linkClass("/models")}>
+            <Link
+              href="/models"
+              onClick={closeMenu}
+              className={linkClass("/models")}
+            >
               Hot Tubs
             </Link>
-            <Link href="/book-visit" onClick={closeMenu} className={linkClass("/book-visit")}>
+            <Link
+              href="/book-visit"
+              onClick={closeMenu}
+              className={linkClass("/book-visit")}
+            >
               Book Visit
+            </Link>
+            <Link
+              href="/guide-care"
+              onClick={closeMenu}
+              className={linkClass("/guide-care")}
+            >
+              Guide & Care
             </Link>
             <Link
               href="/testimonials"
@@ -90,10 +108,18 @@ export function NavBar() {
             >
               Testimonials
             </Link>
-            <Link href="/about" onClick={closeMenu} className={linkClass("/about")}>
+            <Link
+              href="/about"
+              onClick={closeMenu}
+              className={linkClass("/about")}
+            >
               About
             </Link>
-            <Link href="/contact" onClick={closeMenu} className={linkClass("/contact")}>
+            <Link
+              href="/contact"
+              onClick={closeMenu}
+              className={linkClass("/contact")}
+            >
               Contact
             </Link>
             <Link href="/faq" onClick={closeMenu} className={linkClass("/faq")}>

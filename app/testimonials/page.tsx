@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import { HotTubGuideChat } from "@/components/HotTubGuideChat";
+import { getPublicUrl } from "@/lib/getPublicUrl";
+import Image from "next/image";
 
 interface Testimonial {
   id: number;
@@ -14,6 +16,11 @@ interface Testimonial {
   rating: number | null;
   created_at: string;
 }
+
+const testimonialHero = getPublicUrl(
+  "testimonials/testimonial-hero.jpg",
+  "site-images"
+);
 
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -41,9 +48,12 @@ export default function TestimonialsPage() {
       <main className="flex-1">
         {/* Hero */}
         <section className="bg-gradient-to-b from-blue-700 to-blue-500 text-white py-20 px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Customer Testimonials</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Customer Testimonials
+          </h1>
           <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
-            Real stories from our Santa Rosa community — because nothing speaks louder than relaxation that lasts.
+            Real stories from our Santa Rosa community — because nothing speaks
+            louder than relaxation that lasts.
           </p>
         </section>
 
@@ -93,7 +103,8 @@ export default function TestimonialsPage() {
             Ready to experience it yourself?
           </h2>
           <p className="text-blue-100 mb-6">
-            Book a personalized visit and see why our customers love their new hot tubs.
+            Book a personalized visit and see why our customers love their new
+            hot tubs.
           </p>
           <a
             href="/book-visit"
@@ -102,6 +113,14 @@ export default function TestimonialsPage() {
             Book Your Visit →
           </a>
         </section>
+        <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-xl overflow-hidden shadow-lg mb-8 mt-10">
+          <Image
+            src={testimonialHero}
+            alt="Relaxing spa"
+            fill
+            className="object-cover"
+          />
+        </div>
       </main>
 
       <HotTubGuideChat />

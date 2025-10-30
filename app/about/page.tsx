@@ -4,6 +4,11 @@ import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import { HotTubGuideChat } from "@/components/HotTubGuideChat";
 import Image from "next/image";
+import { getPublicUrl } from "@/lib/getPublicUrl";
+
+const aboutStory = getPublicUrl("about/about-story.jpg", "site-images");
+const aboutValues = getPublicUrl("about/about-values.jpg", "site-images");
+const aboutShowroom = getPublicUrl("about/about-showroom.jpg", "site-images");
 
 export default function AboutPage() {
   return (
@@ -47,10 +52,9 @@ export default function AboutPage() {
             </div>
             <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg">
               <Image
-                src="https://images.pexels.com/photos/221457/pexels-photo-221457.jpeg"
+                src={aboutStory}
                 alt="Luxury outdoor hot tub"
                 fill
-                sizes="(max-width: 768px) 100vw, 600px"
                 className="object-cover"
               />
             </div>
@@ -61,10 +65,9 @@ export default function AboutPage() {
             <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg order-2 md:order-1">
               {/* ✅ Updated image (stable Unsplash link) */}
               <Image
-                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80"
-                alt="Craftsmanship detail of hot tub design"
+                src={aboutValues}
+                alt="Hot tub craftsmanship"
                 fill
-                sizes="(max-width: 768px) 100vw, 600px"
                 className="object-cover"
               />
             </div>
@@ -106,6 +109,14 @@ export default function AboutPage() {
               showroom to explore our collection of premium hot tubs and learn
               more about what makes each model unique.
             </p>
+            <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-xl overflow-hidden shadow-lg mb-8">
+              <Image
+                src={aboutShowroom}
+                alt="Hot tub showroom"
+                fill
+                className="object-cover"
+              />
+            </div>
             <a
               href="/book-visit"
               className="inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold transition"
