@@ -12,7 +12,7 @@ export function NavBar() {
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => setIsOpen(false);
 
-  // ✅ Highlights parent section even for nested routes
+  // ✅ Active highlight supports nested routes (e.g. /models/123)
   const isActive = (path: string) =>
     pathname === path || pathname.startsWith(path + "/");
 
@@ -35,7 +35,7 @@ export function NavBar() {
           Santa Rosa Spas
         </Link>
 
-        {/* Desktop Nav */}
+        {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-8 font-medium items-center">
           <Link href="/" className={linkClass("/")}>
             Home
@@ -45,6 +45,9 @@ export function NavBar() {
           </Link>
           <Link href="/book-visit" className={linkClass("/book-visit")}>
             Book Visit
+          </Link>
+          <Link href="/testimonials" className={linkClass("/testimonials")}>
+            Testimonials
           </Link>
           <Link href="/about" className={linkClass("/about")}>
             About
@@ -67,39 +70,30 @@ export function NavBar() {
         </button>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Navigation */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="flex flex-col space-y-3 px-6 py-4 font-medium">
             <Link href="/" onClick={closeMenu} className={linkClass("/")}>
               Home
             </Link>
-            <Link
-              href="/models"
-              onClick={closeMenu}
-              className={linkClass("/models")}
-            >
+            <Link href="/models" onClick={closeMenu} className={linkClass("/models")}>
               Hot Tubs
             </Link>
-            <Link
-              href="/book-visit"
-              onClick={closeMenu}
-              className={linkClass("/book-visit")}
-            >
+            <Link href="/book-visit" onClick={closeMenu} className={linkClass("/book-visit")}>
               Book Visit
             </Link>
             <Link
-              href="/about"
+              href="/testimonials"
               onClick={closeMenu}
-              className={linkClass("/about")}
+              className={linkClass("/testimonials")}
             >
+              Testimonials
+            </Link>
+            <Link href="/about" onClick={closeMenu} className={linkClass("/about")}>
               About
             </Link>
-            <Link
-              href="/contact"
-              onClick={closeMenu}
-              className={linkClass("/contact")}
-            >
+            <Link href="/contact" onClick={closeMenu} className={linkClass("/contact")}>
               Contact
             </Link>
             <Link href="/faq" onClick={closeMenu} className={linkClass("/faq")}>
