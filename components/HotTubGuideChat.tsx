@@ -21,14 +21,32 @@ export function HotTubGuideChat() {
   useEffect(() => {
     if (pathname?.includes("/models/")) {
       setMessages([
-        { role: "assistant", content: "Curious about this hot tub’s features or best uses?" },
+        {
+          role: "assistant",
+          content: "Curious about this hot tub’s features or best uses?",
+        },
       ]);
     } else if (pathname === "/models") {
-      setMessages([{ role: "assistant", content: "Looking for something with 5 seats or more?" }]);
+      setMessages([
+        {
+          role: "assistant",
+          content: "Looking for something with 5 seats or more?",
+        },
+      ]);
     } else if (pathname === "/compare") {
-      setMessages([{ role: "assistant", content: "Want me to highlight the key differences?" }]);
+      setMessages([
+        {
+          role: "assistant",
+          content: "Want me to highlight the key differences?",
+        },
+      ]);
     } else {
-      setMessages([{ role: "assistant", content: "Hi there! How can I help you choose your perfect hot tub?" }]);
+      setMessages([
+        {
+          role: "assistant",
+          content: "Hi there! How can I help you choose your perfect hot tub?",
+        },
+      ]);
     }
   }, [pathname]);
 
@@ -49,22 +67,27 @@ export function HotTubGuideChat() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, route: pathname }),
       });
-
       const data = await res.json();
       if (data.message) {
         setMessages((prev) => [...prev, data.message]);
       } else {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "Sorry, I had trouble connecting. Please try again." },
+          {
+            role: "assistant",
+            content: "Sorry, I had trouble connecting. Please try again.",
+          },
         ]);
       }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Connection error. Please try again later." },
+        {
+          role: "assistant",
+          content: "Connection error. Please try again later.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -106,7 +129,9 @@ export function HotTubGuideChat() {
           >
             {/* Header */}
             <div className="flex justify-between items-center px-5 py-3 border-b border-gray-200 bg-white/70 backdrop-blur-sm">
-              <h2 className="font-semibold text-blue-800 text-lg">Ask our AI Hot Tub Guide</h2>
+              <h2 className="font-semibold text-blue-800 text-lg">
+                Ask our AI Hot Tub Guide
+              </h2>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-500 hover:text-gray-700 transition"

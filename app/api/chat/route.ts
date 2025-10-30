@@ -8,39 +8,37 @@ const openai = new OpenAI({
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // use service key for server-side read access
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, route } = await req.json();
 
-    // ✅ Fetch products from Supabase
+    // ✅ Fetch product data
     const { data: products } = await supabase
       .from("products")
       .select("name, description, seating_capacity, jet_count, price, brand");
 
-    // Convert product data into a compact summary
     const productSummary = products
       ?.map(
         (p) =>
-          `${p.name} (${p.brand}) — ${p.seating_capacity || "N/A"} seats, ${
-            p.jet_count || "N/A"
+          `${p.name} (${p.brand}) — ${p.seating_capacity || "?"} seats, ${
+            p.jet_count || "?"
           } jets. ${p.description || ""}`
       )
       .join("\n\n");
 
-    // Create chat completion with product context
+    // ✅ Generate AI reply
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
         {
           role: "system",
           content: `You are the AI Hot Tub Guide for Santa Rosa Hot Tubs.
-You answer questions about our product lineup using the data provided below.
-Always ground your answers in this real data if relevant.
+You answer questions using the real product data below.
 
-Here are the current hot tub models:
+Product Data:
 ${productSummary}`,
         },
         ...messages,
@@ -50,6 +48,17 @@ ${productSummary}`,
     });
 
     const message = completion.choices[0].message;
+
+    // ✅ Extract last user message for logging
+    const userMsg = messages[messages.length - 1]?.content || "";
+
+    // ✅ Save to Supabase chat_logs
+    await supabase.from("chat_logs").insert({
+      user_message: userMsg,
+      ai_response: message?.content || "",
+      route: route || "unknown",
+    });
+
     return NextResponse.json({ message });
   } catch (error: any) {
     console.error("Chat API Error:", error);
