@@ -1,18 +1,15 @@
 import { supabase } from "@/lib/supabaseClient";
 
-/**
- * Returns a valid public URL for a file in the "product-images" bucket.
- * Automatically strips any leading "product-images/" to avoid duplication.
- */
-export function getPublicUrl(path?: string | null): string {
+export function getPublicUrl(
+  path?: string | null,
+  bucket: string = "product-images"
+): string {
   if (!path) return "/placeholder.jpg";
 
-  // remove accidental double prefix
-  const cleanPath = path.replace(/^product-images\//, "");
+  // Remove accidental prefix
+  const cleanPath = path.replace(new RegExp(`^${bucket}/`), "");
 
-  const { data } = supabase.storage
-    .from("product-images")
-    .getPublicUrl(cleanPath);
+  const { data } = supabase.storage.from(bucket).getPublicUrl(cleanPath);
 
   return data?.publicUrl || "/placeholder.jpg";
 }
