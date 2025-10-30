@@ -1,102 +1,124 @@
 "use client";
 
-import { Layout } from "@/components/Layout";
-import Link from "next/link";
+import { NavBar } from "@/components/NavBar";
+import { Footer } from "@/components/Footer";
+import { HotTubGuideChat } from "@/components/HotTubGuideChat";
 import Image from "next/image";
 
-export default function About() {
+export default function AboutPage() {
   return (
-    <Layout>
-      {/* Hero Section */}
-      <div className="relative h-[400px] md:h-[500px] w-full">
-        <Image
-          src="https://images.pexels.com/photos/1574843/pexels-photo-1574843.jpeg?auto=compress&cs=tinysrgb&w=1600"
-          alt="Backyard spa at dusk"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-center justify-center text-center px-6">
-          <div className="max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
-              Relax. Renew. Restore.
-            </h1>
-            <p className="text-lg md:text-xl text-gray-100 leading-relaxed">
-              At Santa Rosa Spas, every soak tells a story of craftsmanship,
-              care, and connection.
-            </p>
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* ✅ NavBar */}
+      <NavBar />
+
+      <main className="flex-1">
+        {/* ===== Hero Section ===== */}
+        <section className="bg-gradient-to-b from-blue-700 to-blue-500 text-white py-20 px-6 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            About Santa Rosa Spas
+          </h1>
+          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
+            Relaxation. Craftsmanship. Community. Our mission is to bring the
+            joy of wellness to every backyard in Sonoma County.
+          </p>
+        </section>
+
+        {/* ===== Main Content ===== */}
+        <section className="px-6 py-16 max-w-5xl mx-auto space-y-16">
+          {/* Our Story */}
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="text-3xl font-semibold text-blue-800 mb-4">
+                Our Story
+              </h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                Founded right here in Santa Rosa, our company began with a
+                simple goal: to help people unwind, reconnect, and find balance
+                through quality craftsmanship and comfort. Each hot tub we offer
+                reflects years of dedication to superior design, durability, and
+                energy efficiency.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                Whether you’re looking for a peaceful solo soak or a family
+                gathering space, our team is committed to helping you find the
+                perfect fit. We proudly serve local communities with honesty,
+                expertise, and care.
+              </p>
+            </div>
+            <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg">
+              <Image
+                src="https://images.pexels.com/photos/221457/pexels-photo-221457.jpeg"
+                alt="Luxury outdoor hot tub"
+                fill
+                sizes="(max-width: 768px) 100vw, 600px"
+                className="object-cover"
+              />
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <section className="max-w-4xl mx-auto py-20 px-6 text-gray-700 leading-relaxed">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-blue-800">
-            Our Story
-          </h2>
-          <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
-        </div>
+          {/* Our Values */}
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg order-2 md:order-1">
+              {/* ✅ Updated image (stable Unsplash link) */}
+              <Image
+                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80"
+                alt="Craftsmanship detail of hot tub design"
+                fill
+                sizes="(max-width: 768px) 100vw, 600px"
+                className="object-cover"
+              />
+            </div>
 
-        <div className="space-y-6 text-lg">
-          <p>
-            Founded by a lifelong spa professional, <strong>Santa Rosa Spas</strong> brings
-            warmth, trust, and expertise to every backyard. Our mission is simple:
-            to help you relax in style with dependable products and honest service.
-          </p>
+            <div className="order-1 md:order-2">
+              <h2 className="text-3xl font-semibold text-blue-800 mb-4">
+                Our Values
+              </h2>
+              <ul className="space-y-3 text-gray-700 leading-relaxed">
+                <li>
+                  🌿 <strong>Wellness First:</strong> Every design choice we
+                  make aims to enhance physical and mental well-being.
+                </li>
+                <li>
+                  🔧 <strong>Quality Craftsmanship:</strong> We partner only
+                  with trusted brands known for long-lasting performance.
+                </li>
+                <li>
+                  💬 <strong>Local Connection:</strong> We’re proud to serve the
+                  Santa Rosa and Sonoma County community, with personalized
+                  service and local support.
+                </li>
+                <li>
+                  ♻️ <strong>Sustainability:</strong> We prioritize
+                  energy-efficient systems that are kind to both your wallet and
+                  the planet.
+                </li>
+              </ul>
+            </div>
+          </div>
 
-          <p>
-            With decades of hands-on experience, we know what makes a truly exceptional
-            spa experience. From the moment you step into one of our hot tubs, you&apos;ll
-            feel the difference that quality craftsmanship and thoughtful design make.
-          </p>
+          {/* Our Showroom */}
+          <div className="text-center">
+            <h2 className="text-3xl font-semibold text-blue-800 mb-6">
+              Visit Our Showroom
+            </h2>
+            <p className="text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Experience the difference in person. Step into our Santa Rosa
+              showroom to explore our collection of premium hot tubs and learn
+              more about what makes each model unique.
+            </p>
+            <a
+              href="/book-visit"
+              className="inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold transition"
+            >
+              Schedule Your Visit →
+            </a>
+          </div>
+        </section>
+      </main>
 
-          <p>
-            We&apos;re passionate about helping families and friends reconnect, unwind,
-            and create lasting memories. Whether you&apos;re soothing tired muscles after
-            a long day or building your dream outdoor oasis, we&apos;re here to help you
-            find the perfect spa for your lifestyle.
-          </p>
-        </div>
-
-        <div className="bg-blue-50 p-8 rounded-xl mt-12 shadow-sm">
-          <h2 className="text-2xl font-bold text-blue-800 mb-5">
-            Why Choose Santa Rosa Spas?
-          </h2>
-          <ul className="space-y-3">
-            <li className="flex items-start">
-              <span className="text-blue-600 font-bold mr-3">✓</span>
-              <span>Expert guidance from experienced spa professionals</span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 font-bold mr-3">✓</span>
-              <span>Premium quality hot tubs from trusted brands</span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 font-bold mr-3">✓</span>
-              <span>Transparent pricing with no hidden surprises</span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 font-bold mr-3">✓</span>
-              <span>Personal, dedicated customer support</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <p className="text-lg mb-4">
-            Ready to experience the comfort and calm of your own backyard retreat?
-          </p>
-          <Link
-            href="/book-visit"
-            className="inline-block bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-          >
-            Book a Showroom Visit
-          </Link>
-        </div>
-      </section>
-    </Layout>
+      {/* ✅ Floating AI Chat + Footer */}
+      <HotTubGuideChat />
+      <Footer />
+    </div>
   );
 }
