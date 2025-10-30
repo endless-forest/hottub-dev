@@ -7,6 +7,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import type { Product } from "@/types/Product";
 import { getPublicUrl } from "@/lib/getPublicUrl";
+import { HotTubGuideChat } from "@/components/HotTubGuideChat";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();
@@ -189,6 +190,7 @@ export default function ComparePage() {
           </table>
         </div>
       </section>
+      <HotTubGuideChat />
     </main>
   );
 }
