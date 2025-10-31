@@ -56,6 +56,8 @@ export default function AboutPage() {
                 alt="Luxury outdoor hot tub"
                 fill
                 className="object-cover"
+                placeholder="blur"
+                blurDataURL="/placeholder-blur.jpg"
               />
             </div>
           </div>
@@ -115,6 +117,8 @@ export default function AboutPage() {
                 alt="Hot tub showroom"
                 fill
                 className="object-cover"
+                placeholder="blur"
+                blurDataURL="/placeholder-blur.jpg"
               />
             </div>
             <a

@@ -78,6 +78,8 @@ export default function ContactPage() {
               fill
               sizes="33vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
 

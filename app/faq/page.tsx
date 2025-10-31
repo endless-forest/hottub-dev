@@ -125,6 +125,8 @@ export default function FAQPage() {
             fill
             sizes="100vw"
             className="object-cover"
+            placeholder="blur"
+            blurDataURL="/placeholder-blur.jpg"
           />
         </div>
       </main>

@@ -221,6 +221,8 @@ export default function BookVisitPage() {
               fill
               sizes="33vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
         </div>

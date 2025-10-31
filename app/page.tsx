@@ -25,14 +25,14 @@ export default async function Home() {
       <section className="bg-gradient-to-b from-blue-50 to-white py-20 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
-           <Image
-          src={heroHotTub}
-          alt="Relaxing hot tub deck"
-          fill
-          sizes="100vw"
-          priority
-          className="object-cover"
-        />
+            <Image
+              src={heroHotTub}
+              alt="Relaxing hot tub deck"
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover"
+            />
           </div>
           <div>
             <h2 className="text-3xl md:text-4xl font-semibold text-blue-800 mb-4">
@@ -60,7 +60,11 @@ export default async function Home() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {featured.map((product) => {
-            const imageUrl = getPublicUrl(product.storage_path);
+            const imageUrl = getPublicUrl(
+              product.storage_path ?? "",
+              "product-images"
+            );
+
             return (
               <Link
                 key={product.id}
@@ -73,6 +77,8 @@ export default async function Home() {
                     alt={product.name}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    placeholder="blur"
+                    blurDataURL="/placeholder-blur.jpg"
                   />
                 </div>
                 <div className="p-5 text-left">

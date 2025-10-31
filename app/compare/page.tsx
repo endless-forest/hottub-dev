@@ -103,11 +103,18 @@ export default function ComparePage() {
             >
               <div className="relative w-full aspect-[4/3] mb-4 rounded-md overflow-hidden">
                 <Image
-                  src={getPublicUrl(product.storage_path) || "/placeholder.jpg"}
+                  src={
+                    getPublicUrl(
+                      product.storage_path ?? "",
+                      "product-images"
+                    ) || "/placeholder.jpg"
+                  }
                   alt={product.name}
                   fill
                   sizes="(max-width: 1024px) 100vw, 400px"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  placeholder="blur"
+                  blurDataURL="/placeholder-blur.jpg"
                 />
               </div>
 
@@ -150,7 +157,9 @@ export default function ComparePage() {
                       {p.name}
                       <div>
                         <a
-                          href={`/book-visit?model=${encodeURIComponent(p.name)}`}
+                          href={`/book-visit?model=${encodeURIComponent(
+                            p.name
+                          )}`}
                           className="text-xs text-blue-600 hover:underline"
                         >
                           Book Visit →
@@ -178,11 +187,16 @@ export default function ComparePage() {
                       {feature.label}
                     </td>
                     {products.map((p) => (
-                      <td key={p.id} className="border-t px-4 py-3 text-gray-800">
-                        {feature.key === "price" && `$${p.price.toLocaleString()}`}
+                      <td
+                        key={p.id}
+                        className="border-t px-4 py-3 text-gray-800"
+                      >
+                        {feature.key === "price" &&
+                          `$${p.price.toLocaleString()}`}
                         {feature.key === "rating" &&
                           (p.rating ? `⭐ ${p.rating.toFixed(1)}` : "–")}
-                        {feature.key === "seating_capacity" && p.seating_capacity}
+                        {feature.key === "seating_capacity" &&
+                          p.seating_capacity}
                         {feature.key === "jet_count" && p.jet_count}
                         {feature.key === "color_options" && p.color_options}
                         {feature.key === "dimensions" && p.dimensions}

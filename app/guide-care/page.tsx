@@ -8,7 +8,10 @@ import { getPublicUrl } from "@/lib/getPublicUrl";
 
 const waterCare = getPublicUrl("guide-care/water-care.jpg", "site-images");
 const coverCare = getPublicUrl("guide-care/cover-cleaning.jpg", "site-images");
-const energyTips = getPublicUrl("guide-care/energy-efficiency.jpg", "site-images");
+const energyTips = getPublicUrl(
+  "guide-care/energy-efficiency.jpg",
+  "site-images"
+);
 const winterizing = getPublicUrl("guide-care/winterizing.jpg", "site-images");
 
 export default function GuideCarePage() {
@@ -120,6 +123,8 @@ export default function GuideCarePage() {
               fill
               sizes="(max-width:768px) 100vw, 600px"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
           <div className="order-1 md:order-2">
