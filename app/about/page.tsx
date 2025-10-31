@@ -58,6 +58,7 @@ export default function AboutPage() {
                 className="object-cover"
                 placeholder="blur"
                 blurDataURL="/placeholder-blur.jpg"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>
@@ -71,6 +72,7 @@ export default function AboutPage() {
                 alt="Hot tub craftsmanship"
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
 
@@ -119,6 +121,7 @@ export default function AboutPage() {
                 className="object-cover"
                 placeholder="blur"
                 blurDataURL="/placeholder-blur.jpg"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
             <a

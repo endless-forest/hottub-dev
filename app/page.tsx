@@ -29,7 +29,7 @@ export default async function Home() {
               src={heroHotTub}
               alt="Relaxing hot tub deck"
               fill
-              sizes="100vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
               priority
               className="object-cover"
             />
@@ -79,6 +79,7 @@ export default async function Home() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     placeholder="blur"
                     blurDataURL="/placeholder-blur.jpg"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                   />
                 </div>
                 <div className="p-5 text-left">

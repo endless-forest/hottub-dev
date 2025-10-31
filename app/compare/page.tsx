@@ -111,7 +111,7 @@ export default function ComparePage() {
                   }
                   alt={product.name}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 400px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   placeholder="blur"
                   blurDataURL="/placeholder-blur.jpg"

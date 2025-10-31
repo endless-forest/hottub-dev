@@ -54,7 +54,7 @@ export default function GuideCarePage() {
               src={waterCare}
               alt="Balancing hot tub water chemistry"
               fill
-              sizes="(max-width:768px) 100vw, 600px"
+               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </div>
@@ -67,7 +67,7 @@ export default function GuideCarePage() {
               src={coverCare}
               alt="Cleaning a hot tub cover"
               fill
-              sizes="(max-width:768px) 100vw, 600px"
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </div>
@@ -121,7 +121,7 @@ export default function GuideCarePage() {
               src={winterizing}
               alt="Winter hot tub care"
               fill
-              sizes="(max-width:768px) 100vw, 600px"
+               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
               placeholder="blur"
               blurDataURL="/placeholder-blur.jpg"

@@ -28,7 +28,7 @@ export function ProductCard({ product }: { product: Product }) {
             loading="lazy"
             placeholder="blur"
             blurDataURL="/placeholder-blur.jpg" // small local blur (we’ll make this next)
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>

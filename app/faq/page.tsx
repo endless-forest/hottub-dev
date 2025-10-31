@@ -123,7 +123,7 @@ export default function FAQPage() {
             src={faqHero}
             alt="Hot tub sunset"
             fill
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 100vw"
             className="object-cover"
             placeholder="blur"
             blurDataURL="/placeholder-blur.jpg"

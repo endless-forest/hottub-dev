@@ -142,7 +142,7 @@ export default function ModelDetails() {
             priority
             placeholder="blur"
             blurDataURL="/placeholder-blur.jpg"
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 100vw"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
@@ -295,17 +295,29 @@ export default function ModelDetails() {
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
           >
             <div
-              className="relative w-[92vw] max-w-5xl aspect-[4/3]"
+              className="
+    relative
+    w-[95vw]
+    max-w-[1600px]
+    h-auto
+    max-h-[90vh]
+    flex
+    items-center
+    justify-center
+  "
               onClick={(e) => e.stopPropagation()}
             >
               <Image
                 src={images[currentIndex] || "/placeholder-blur.jpg"}
                 alt={`${product.name} – image ${currentIndex + 1}`}
-                fill
-                className="object-contain select-none"
+                fill={false}
+                width={1600}
+                height={900}
+                className="object-contain max-h-[90vh] w-auto mx-auto select-none"
                 priority
                 placeholder="blur"
                 blurDataURL="/placeholder-blur.jpg"
+                sizes="(max-width: 768px) 100vw, 80vw"
               />
               {images.length > 1 && (
                 <>

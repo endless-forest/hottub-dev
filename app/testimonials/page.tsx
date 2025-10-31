@@ -121,6 +121,7 @@ export default function TestimonialsPage() {
             className="object-cover"
             placeholder="blur"
             blurDataURL="/placeholder-blur.jpg"
+            sizes="(max-width: 768px) 100vw, 100vw"
           />
         </div>
       </main>
