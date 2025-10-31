@@ -18,32 +18,24 @@ export default function ContactPage() {
   const [sessionId] = useState(uuidv4());
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [chatActive, setChatActive] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const leftImage = getPublicUrl("contact/contact-hero.jpg", "site-images");
   const rightImage = getPublicUrl("contact/contact-chat.jpg", "site-images");
 
-  // Subscribe to realtime chat messages
   useEffect(() => {
     const channel = supabase
       .channel("contact_chats")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "contact_chats" },
-        (payload: { new: ChatMessage }) => {
-          setMessages((prev) => [...prev, payload.new]);
-          setChatActive(true);
-        }
+        (payload: { new: ChatMessage }) =>
+          setMessages((prev) => [...prev, payload.new])
       )
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => supabase.removeChannel(channel);
   }, []);
 
-  // Auto-scroll when new messages appear
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -51,8 +43,6 @@ export default function ContactPage() {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-
-    setChatActive(true);
     const msg = input.trim();
     setMessages((prev) => [...prev, { sender: "visitor", message: msg }]);
     setInput("");
@@ -69,128 +59,125 @@ export default function ContactPage() {
       <NavBar />
 
       <main className="flex-1 flex items-center justify-center px-6 py-[clamp(2rem,5vw,5rem)]">
-        <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-10 items-stretch">
-          {/* Left Image */}
-          <div className="hidden lg:block relative rounded-2xl overflow-hidden shadow-lg transition-all duration-500 ease-in-out">
+        {/* ✅ Real four-column grid */}
+        <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-4 gap-10 items-stretch">
+          {/* Left image */}
+          <div className="hidden lg:block relative rounded-2xl overflow-hidden shadow-lg">
             <Image
               src={leftImage}
               alt="Showroom exterior"
               fill
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes="25vw"
               className="object-cover"
               placeholder="blur"
               blurDataURL="/placeholder-blur.jpg"
             />
           </div>
 
-          {/* Center content */}
-          <div className="flex items-stretch justify-center">
-            <div className="w-full bg-white rounded-2xl shadow-lg p-10 max-w-[700px] flex flex-col transition-all duration-500 ease-in-out">
-              {/* Top section - Contact form */}
-              <div className="flex-shrink-0">
-                <h1 className="text-3xl font-bold text-blue-800 mb-4 text-center">
-                  Get in Touch
-                </h1>
-                <p className="text-gray-700 text-center mb-8">
-                  We’re here to help you find your perfect hot tub. Whether you
-                  have a question, need advice, or want to book a visit, we’d
-                  love to hear from you.
-                </p>
+          {/* Contact form */}
+          <div className="bg-white rounded-2xl shadow-lg p-10 flex flex-col justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-blue-800 mb-4 text-center">
+                Get in Touch
+              </h1>
+              <p className="text-gray-700 text-center mb-8">
+                We’re here to help you find your perfect hot tub. Whether you
+                have a question, need advice, or want to book a visit, we’d love
+                to hear from you.
+              </p>
 
-                <form className="space-y-4 mb-10">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Your Email"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                  <textarea
-                    placeholder="Your Message"
-                    rows={4}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2 rounded-lg"
-                  >
-                    Send Message
-                  </button>
-                </form>
-              </div>
-
-              {/* Live Chat Section */}
-              <div
-                className={`flex flex-col bg-gradient-to-b from-gray-50 to-white rounded-xl border border-gray-200 shadow-inner transition-all duration-500 ease-in-out ${
-                  chatActive ? "flex-grow" : "h-[350px]"
-                }`}
-              >
-                <div className="text-center py-4 border-b border-gray-200">
-                  <h2 className="text-2xl font-semibold text-blue-800 flex items-center justify-center gap-2">
-                    <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span>
-                    Talk Directly with a Representative
-                  </h2>
-                  <p className="text-gray-600 text-sm mt-2">
-                    Our team replies in real time during showroom hours.
-                  </p>
-                </div>
-
-                {/* Message List */}
-                <div className="flex-1 overflow-y-auto space-y-3 p-4 scrollbar-thin scrollbar-thumb-blue-200">
-                  {messages.map((m, i) => (
-                    <div
-                      key={i}
-                      className={`p-2 rounded-lg w-fit max-w-[80%] ${
-                        m.sender === "visitor"
-                          ? "bg-blue-700 text-white ml-auto"
-                          : "bg-white text-gray-800 border border-gray-200"
-                      }`}
-                    >
-                      {m.message}
-                    </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </div>
-
-                {/* Sticky Input Area */}
-                <form
-                  onSubmit={sendMessage}
-                  className="border-t border-gray-200 bg-white p-3 flex gap-3 sticky bottom-0"
+              <form className="space-y-4 mb-6">
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+                <textarea
+                  placeholder="Your Message"
+                  rows={4}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2 rounded-lg shadow-sm"
                 >
-                  <textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onFocus={() => setChatActive(true)}
-                    placeholder="Type your message..."
-                    rows={3}
-                    className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-sm resize-none focus:ring-2 focus:ring-blue-500 outline-none overflow-y-auto"
-                    style={{ maxHeight: "8rem" }}
-                  />
-                  <button
-                    type="submit"
-                    className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-lg text-sm font-medium flex-shrink-0"
-                  >
-                    Send
-                  </button>
-                </form>
-              </div>
+                  Send Message
+                </button>
+              </form>
             </div>
           </div>
 
-          {/* Right Image */}
-          <div className="hidden lg:block relative rounded-2xl overflow-hidden shadow-lg transition-all duration-500 ease-in-out">
+          {/* Live chat */}
+          <div className="bg-white rounded-2xl shadow-lg flex flex-col justify-between p-6 border border-blue-100">
+            <div className="border-b border-gray-200 pb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]"></span>
+                </span>
+                <h2 className="text-xl font-semibold text-blue-800">
+                  Talk with a Representative
+                </h2>
+              </div>
+              <p className="text-gray-600 text-center text-sm">
+                Our team replies in real time during showroom hours.
+              </p>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto space-y-3 py-4 px-2 scrollbar-thin scrollbar-thumb-blue-200">
+              {messages.map((m, i) => (
+                <div
+                  key={i}
+                  className={`p-2 rounded-lg w-fit max-w-[80%] ${
+                    m.sender === "visitor"
+                      ? "bg-blue-700 text-white ml-auto"
+                      : "bg-blue-50 text-gray-800 border border-blue-100"
+                  }`}
+                >
+                  {m.message}
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input */}
+            <form
+              onSubmit={sendMessage}
+              className="border-t border-gray-200 bg-blue-50/40 p-3 flex gap-3 rounded-b-2xl backdrop-blur-md"
+            >
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                rows={2}
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm resize-none focus:ring-2 focus:ring-blue-500 outline-none"
+                style={{ maxHeight: "8rem" }}
+              />
+              <button
+                type="submit"
+                className="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-lg text-sm font-medium flex-shrink-0 transition shadow-sm"
+              >
+                Send
+              </button>
+            </form>
+          </div>
+
+          {/* Right image */}
+          <div className="hidden lg:block relative rounded-2xl overflow-hidden shadow-lg">
             <Image
               src={rightImage}
               alt="Customer service team"
               fill
-              sizes="33vw"
+              sizes="25vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
         </div>
