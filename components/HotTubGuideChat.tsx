@@ -28,17 +28,11 @@ export function HotTubGuideChat() {
       ]);
     } else if (pathname === "/models") {
       setMessages([
-        {
-          role: "assistant",
-          content: "Looking for something with 5 seats or more?",
-        },
+        { role: "assistant", content: "Looking for something with 5 seats or more?" },
       ]);
     } else if (pathname === "/compare") {
       setMessages([
-        {
-          role: "assistant",
-          content: "Want me to highlight the key differences?",
-        },
+        { role: "assistant", content: "Want me to highlight the key differences?" },
       ]);
     } else {
       setMessages([
@@ -55,10 +49,7 @@ export function HotTubGuideChat() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const newMessages: ChatMessage[] = [
-      ...messages,
-      { role: "user" as const, content: input },
-    ];
+    const newMessages: ChatMessage[] = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
     setInput("");
     setLoading(true);
@@ -81,7 +72,7 @@ export function HotTubGuideChat() {
           },
         ]);
       }
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
@@ -94,6 +85,7 @@ export function HotTubGuideChat() {
     }
   };
 
+  // Only show on certain routes
   if (!pathname?.includes("/models") && pathname !== "/compare") return null;
 
   return (
@@ -121,43 +113,44 @@ export function HotTubGuideChat() {
         {isOpen && (
           <motion.div
             key="chat-panel"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 right-0 left-0 md:right-6 md:left-auto md:w-[380px] h-[60vh] md:h-[50vh] bg-gradient-to-b from-blue-50 to-white border-t md:border border-gray-200 rounded-t-2xl md:rounded-2xl shadow-2xl z-[9999] flex flex-col"
+            className="fixed bottom-4 right-4 md:right-6 md:w-[400px] h-[65vh] md:h-[55vh] bg-white/90 backdrop-blur-lg border border-blue-100 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-[9999] flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex justify-between items-center px-5 py-3 border-b border-gray-200 bg-white/70 backdrop-blur-sm">
-              <h2 className="font-semibold text-blue-800 text-lg">
-                Ask our AI Hot Tub Guide
-              </h2>
+            <div className="flex justify-between items-center px-5 py-3 bg-gradient-to-r from-blue-700 to-sky-600 text-white shadow-sm">
+              <h2 className="font-semibold text-lg">AI Hot Tub Guide</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-500 hover:text-gray-700 transition"
+                className="text-white/90 hover:text-white transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 text-sm text-gray-700">
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 text-sm text-gray-700 scrollbar-thin scrollbar-thumb-blue-100">
               {messages.map((m, i) => (
-                <div
+                <motion.div
                   key={i}
-                  className={`p-3 rounded-lg max-w-[85%] shadow-sm ${
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className={`p-3 rounded-2xl max-w-[85%] leading-relaxed ${
                     m.role === "assistant"
-                      ? "bg-blue-100 text-gray-800 self-start"
-                      : "bg-blue-700 text-white self-end ml-auto"
+                      ? "bg-blue-50 text-gray-800 border border-blue-100"
+                      : "bg-blue-700 text-white ml-auto shadow-md"
                   }`}
                 >
                   {m.content}
-                </div>
+                </motion.div>
               ))}
 
               {/* Loading indicator */}
               {loading && (
-                <div className="bg-blue-100 text-gray-700 p-3 rounded-lg inline-block shadow-sm animate-pulse">
+                <div className="bg-blue-100 text-gray-700 p-3 rounded-2xl inline-block shadow-sm animate-pulse">
                   <span className="flex items-center gap-2">
                     <span className="text-blue-700 font-medium">Thinking</span>
                     <span className="flex gap-1">
@@ -173,19 +166,19 @@ export function HotTubGuideChat() {
             {/* Input */}
             <form
               onSubmit={handleSubmit}
-              className="border-t border-gray-200 bg-white/70 backdrop-blur-sm p-3 flex gap-2"
+              className="p-3 flex gap-2 border-t border-blue-100 bg-blue-50/40 backdrop-blur-md"
             >
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about models, sizes, or features..."
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="flex-1 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                className={`px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition ${
                   loading
                     ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                     : "bg-blue-700 hover:bg-blue-800 text-white"

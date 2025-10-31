@@ -17,17 +17,32 @@ export function CompareBar() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="fixed bottom-0 left-0 right-0 bg-blue-700 text-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-lg z-50"
+          className="
+            fixed bottom-0 left-0 right-0
+            bg-blue-700 text-white p-4
+            flex flex-col sm:flex-row sm:items-center sm:justify-between
+            shadow-lg z-[9000]
+          "
         >
           <p className="text-center sm:text-left mb-2 sm:mb-0">
             {compareList.length} model
             {compareList.length > 1 ? "s" : ""} selected for comparison
           </p>
 
-          <div className="flex justify-center sm:justify-end">
+          <div
+            className="
+              flex justify-center sm:justify-end
+              w-full sm:w-auto
+              pr-0 sm:pr-[5rem]   /* <-- safe margin for chat bubble */
+            "
+          >
             <Link
               href={compareUrl}
-              className="bg-white text-blue-700 px-5 py-2 rounded font-semibold hover:bg-gray-100 transition"
+              className="
+                bg-white text-blue-700 px-5 py-2 rounded font-semibold
+                hover:bg-gray-100 transition
+                shadow-sm
+              "
             >
               Compare Selected
             </Link>
