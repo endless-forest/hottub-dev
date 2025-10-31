@@ -8,7 +8,10 @@ import { getPublicUrl } from "@/lib/getPublicUrl";
 
 const waterCare = getPublicUrl("guide-care/water-care.jpg", "site-images");
 const coverCare = getPublicUrl("guide-care/cover-cleaning.jpg", "site-images");
-const energyTips = getPublicUrl("guide-care/energy-efficiency.jpg", "site-images");
+const energyTips = getPublicUrl(
+  "guide-care/energy-efficiency.jpg",
+  "site-images"
+);
 const winterizing = getPublicUrl("guide-care/winterizing.jpg", "site-images");
 
 export default function GuideCarePage() {
@@ -51,7 +54,7 @@ export default function GuideCarePage() {
               src={waterCare}
               alt="Balancing hot tub water chemistry"
               fill
-              sizes="(max-width:768px) 100vw, 600px"
+               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </div>
@@ -64,7 +67,7 @@ export default function GuideCarePage() {
               src={coverCare}
               alt="Cleaning a hot tub cover"
               fill
-              sizes="(max-width:768px) 100vw, 600px"
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </div>
@@ -118,8 +121,10 @@ export default function GuideCarePage() {
               src={winterizing}
               alt="Winter hot tub care"
               fill
-              sizes="(max-width:768px) 100vw, 600px"
+               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
           <div className="order-1 md:order-2">

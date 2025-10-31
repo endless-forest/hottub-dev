@@ -67,7 +67,7 @@ export default function BookVisitPage() {
               src={leftImage}
               alt="Hot tub exterior"
               fill
-              sizes="33vw"
+              sizes="(max-width: 768px) 100vw, 40vw"
               className="object-cover"
             />
           </div>
@@ -219,8 +219,10 @@ export default function BookVisitPage() {
               src={rightImage}
               alt="Showroom interior"
               fill
-              sizes="33vw"
+              sizes="(max-width: 768px) 100vw, 40vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
         </div>

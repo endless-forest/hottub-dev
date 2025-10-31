@@ -119,6 +119,9 @@ export default function TestimonialsPage() {
             alt="Relaxing spa"
             fill
             className="object-cover"
+            placeholder="blur"
+            blurDataURL="/placeholder-blur.jpg"
+            sizes="(max-width: 768px) 100vw, 100vw"
           />
         </div>
       </main>

@@ -7,7 +7,11 @@ import { getPublicUrl } from "@/lib/getPublicUrl";
 import { useCompare } from "@/context/CompareContext";
 
 export function ProductCard({ product }: { product: Product }) {
-  const imageUrl = getPublicUrl(product.storage_path);
+  const imageUrl = getPublicUrl(product.storage_path ?? "", "product-images", {
+    w: 600,
+    q: 70,
+  });
+
   const { toggleCompare, isCompared } = useCompare();
 
   const isChecked = isCompared(product.id.toString());
@@ -15,16 +19,16 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all">
       {/* Card clickable section */}
-      <Link
-        href={`/models/${product.id}`}
-        className="block"
-      >
+      <Link href={`/models/${product.id}`} className="block">
         <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden mb-3">
           <Image
             src={imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 768px) 100vw, 33vw"
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="/placeholder-blur.jpg" // small local blur (we’ll make this next)
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>

@@ -76,8 +76,10 @@ export default function ContactPage() {
               src={leftImage}
               alt="Showroom exterior"
               fill
-              sizes="33vw"
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="/placeholder-blur.jpg"
             />
           </div>
 

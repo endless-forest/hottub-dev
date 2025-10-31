@@ -20,7 +20,7 @@ export default function ModelDetails() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Fetch product
+  // 🔹 Fetch product from Supabase
   useEffect(() => {
     (async () => {
       if (!id) return;
@@ -29,20 +29,37 @@ export default function ModelDetails() {
         .select("*")
         .eq("id", id)
         .single();
+
       if (error) console.error("Error fetching product:", error);
       setProduct(data as Product | null);
       setLoading(false);
     })();
   }, [id]);
 
+  // 🔹 Build all image URLs
   const images = useMemo(() => {
-    const gallery = (product?.gallery_paths ?? []) as string[];
-    const urls = gallery.map((path) => getPublicUrl(path));
-    const main = getPublicUrl(product?.storage_path);
-    return [main, ...urls];
+    if (!product) return [];
+
+    const gallery = (product.gallery_paths ?? []) as string[];
+
+    const urls = gallery
+      .filter(Boolean)
+      .map((path) =>
+        getPublicUrl(path ?? "", "product-images", { w: 1200, q: 80 })
+      );
+
+    const main = getPublicUrl(product.storage_path ?? "", "product-images", {
+      w: 1200,
+      q: 80,
+    });
+
+    console.log("🧩 Product:", product);
+    console.log("🖼️ Image URLs:", urls);
+
+    return [main, ...urls].filter(Boolean);
   }, [product]);
 
-  // Preload next/previous images for modal
+  // 🔹 Preload next/prev images for modal navigation
   useEffect(() => {
     if (typeof document === "undefined" || images.length < 2) return;
     const preload = (src: string) => {
@@ -71,7 +88,7 @@ export default function ModelDetails() {
     setCurrentIndex((i) => (i - 1 + images.length) % images.length);
   }, [images.length]);
 
-  // Keyboard support in modal
+  // 🔹 Keyboard navigation inside modal
   useEffect(() => {
     if (!isModalOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -83,7 +100,6 @@ export default function ModelDetails() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isModalOpen, handleNext, handlePrev]);
 
-  // Swipe support
   const swipeHandlers = useSwipeable({
     onSwipedLeft: handleNext,
     onSwipedRight: handlePrev,
@@ -114,18 +130,19 @@ export default function ModelDetails() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* ✅ NavBar added */}
       <NavBar />
 
       <main className="flex-1 pb-16">
-        {/* Hero */}
+        {/* 🏞 Hero Image */}
         <div className="relative h-[40vh] w-full">
           <Image
-            src={images[0] || "/placeholder.jpg"}
+            src={images[0] || "/placeholder-blur.jpg"}
             alt={product.name}
             fill
             priority
-            sizes="100vw"
+            placeholder="blur"
+            blurDataURL="/placeholder-blur.jpg"
+            sizes="(max-width: 768px) 100vw, 100vw"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
@@ -135,18 +152,21 @@ export default function ModelDetails() {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* 🔹 Main content area */}
         <section className="max-w-6xl mx-auto mt-10 px-4 grid lg:grid-cols-2 gap-[clamp(1.25rem,3vw,2.5rem)] items-start">
-          {/* Image viewer */}
+          {/* Gallery / Viewer */}
           <div className="flex flex-col gap-4">
             <div
               onClick={() => setModalOpen(true)}
               className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg group cursor-zoom-in"
             >
               <Image
-                src={images[currentIndex] || "/placeholder.jpg"}
+                src={images[currentIndex] || "/placeholder-blur.jpg"}
                 alt={`${product.name} image ${currentIndex + 1}`}
                 fill
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="/placeholder-blur.jpg"
                 sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -167,6 +187,9 @@ export default function ModelDetails() {
                     src={src}
                     alt={`Thumbnail ${idx + 1}`}
                     fill
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL="/placeholder-blur.jpg"
                     sizes="80px"
                     className="object-cover"
                   />
@@ -175,7 +198,7 @@ export default function ModelDetails() {
             </div>
           </div>
 
-          {/* Details */}
+          {/* Product details */}
           <div>
             <p className="text-gray-700 text-[clamp(1rem,1.6vw,1.125rem)] mb-4 leading-relaxed">
               {product.description}
@@ -241,9 +264,7 @@ export default function ModelDetails() {
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2 font-medium text-gray-700">
-                      Warranty
-                    </td>
+                    <td className="py-2 font-medium text-gray-700">Warranty</td>
                     <td className="py-2 text-gray-600">
                       {product.warranty_years
                         ? `${product.warranty_years} years`
@@ -256,7 +277,7 @@ export default function ModelDetails() {
           </div>
         </section>
 
-        {/* Back */}
+        {/* Back button */}
         <div className="mt-10 text-center">
           <button
             onClick={() => router.push("/models")}
@@ -266,7 +287,7 @@ export default function ModelDetails() {
           </button>
         </div>
 
-        {/* Fullscreen Modal */}
+        {/* 🖼 Fullscreen modal viewer */}
         {isModalOpen && (
           <div
             {...swipeHandlers}
@@ -274,15 +295,29 @@ export default function ModelDetails() {
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
           >
             <div
-              className="relative w-[92vw] max-w-5xl aspect-[4/3]"
+              className="
+    relative
+    w-[95vw]
+    max-w-[1600px]
+    h-auto
+    max-h-[90vh]
+    flex
+    items-center
+    justify-center
+  "
               onClick={(e) => e.stopPropagation()}
             >
               <Image
-                src={images[currentIndex] || "/placeholder.jpg"}
+                src={images[currentIndex] || "/placeholder-blur.jpg"}
                 alt={`${product.name} – image ${currentIndex + 1}`}
-                fill
-                className="object-contain select-none"
+                fill={false}
+                width={1600}
+                height={900}
+                className="object-contain max-h-[90vh] w-auto mx-auto select-none"
                 priority
+                placeholder="blur"
+                blurDataURL="/placeholder-blur.jpg"
+                sizes="(max-width: 768px) 100vw, 80vw"
               />
               {images.length > 1 && (
                 <>
@@ -315,7 +350,6 @@ export default function ModelDetails() {
         )}
       </main>
 
-      {/* ✅ Floating chat + Footer */}
       <HotTubGuideChat />
       <Footer />
     </div>

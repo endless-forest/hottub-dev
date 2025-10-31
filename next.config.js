@@ -1,11 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [480, 768, 1024, 1280, 1600],
+    imageSizes: [128, 256, 384],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "nvdpajyzceaavgzlbsdz.supabase.co", // ← your Supabase project host
+        hostname: "nvdpajyzceaavgzlbsdz.supabase.co",
         pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "nvdpajyzceaavgzlbsdz.supabase.co",
+        pathname: "/storage/v1/render/image/public/**",
       },
       {
         protocol: "https",
