@@ -29,11 +29,16 @@ export default function ContactPage() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "contact_chats" },
-        (payload: { new: ChatMessage }) =>
-          setMessages((prev) => [...prev, payload.new])
+        (payload: { new: ChatMessage }) => {
+          setMessages((prev) => [...prev, payload.new]);
+        }
       )
       .subscribe();
-    return () => supabase.removeChannel(channel);
+
+    // ✅ FIX: cleanup should not be async
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {
