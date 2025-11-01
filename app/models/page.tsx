@@ -16,8 +16,10 @@ export default function Models() {
           </p>
         </section>
 
-        <ProductGrid />
+        {/* 👇 Just pass categoryName */}
+        <ProductGrid categoryName="Hot Tub" />
       </Layout>
+
       <HotTubGuideChat />
     </div>
   );

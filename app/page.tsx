@@ -5,10 +5,59 @@ import { getPublicUrl } from "@/lib/getPublicUrl";
 import Image from "next/image";
 import Link from "next/link";
 
-// ✅ Server-side data fetch for featured models
+// ✅ Step 1: Get the "Hot Tub" category ID
+async function getHotTubCategoryId() {
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("id, name")
+    .eq("name", "Hot Tub")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching Hot Tub category:", error);
+    return null;
+  }
+
+  if (!data) {
+    console.warn("⚠️ No 'Hot Tub' category found in product_categories");
+    return null;
+  }
+
+  console.log("✅ Found Hot Tub category:", data.name, data.id);
+  return data.id;
+}
+
+// ✅ Step 2: Fetch only Hot Tub products
 async function getFeaturedModels() {
-  const { data } = await supabase.from("products").select("*").limit(3);
-  return data || [];
+  const hotTubCategoryId = await getHotTubCategoryId();
+  if (!hotTubCategoryId) return [];
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("category_id", hotTubCategoryId);
+
+  if (error) {
+    console.error("Error fetching hot tub products:", error);
+    return [];
+  }
+
+  if (!data?.length) return [];
+
+  // Shuffle randomly and take 3
+  const shuffled = data.sort(() => Math.random() - 0.5).slice(0, 3);
+  return shuffled;
+}
+
+// ✅ Helper: pick a random main/gallery image
+function pickRandomImage(product: any) {
+  const allImages = [
+    ...(product.gallery_paths ?? []),
+    ...(product.storage_path ? [product.storage_path] : []),
+  ];
+  if (!allImages.length) return null;
+  const randomPath = allImages[Math.floor(Math.random() * allImages.length)];
+  return getPublicUrl(randomPath, "product-images");
 }
 
 const heroHotTub = getPublicUrl("home/hero-hot-tub.jpg", "site-images");
@@ -52,59 +101,62 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 🛁 Featured Models */}
+      {/* 🛁 Featured Hot Tubs */}
       <section className="py-20 px-6 bg-white text-center">
         <h2 className="text-3xl md:text-4xl font-semibold text-blue-800 mb-8">
-          Featured Models
+          Featured Hot Tubs
         </h2>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {featured.map((product) => {
-            const imageUrl = getPublicUrl(
-              product.storage_path ?? "",
-              "product-images"
-            );
+        {featured.length > 0 ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {featured.map((product) => {
+              const imageUrl = pickRandomImage(product) || "/placeholder.jpg";
 
-            return (
-              <Link
-                key={product.id}
-                href={`/models/${product.id}`}
-                className="group block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
-              >
-                <div className="relative w-full aspect-[4/3]">
-                  <Image
-                    src={imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    placeholder="blur"
-                    blurDataURL="/placeholder-blur.jpg"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
-                  />
-                </div>
-                <div className="p-5 text-left">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-700">
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                    {product.description}
-                  </p>
-                  <p className="text-blue-700 font-bold text-base">
-                    ${product.price?.toLocaleString()}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+              return (
+                <Link
+                  key={product.id}
+                  href={`/models/${product.id}`}
+                  className="group block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="relative w-full aspect-[4/3]">
+                    <Image
+                      src={imageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      placeholder="blur"
+                      blurDataURL="/placeholder-blur.jpg"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                    />
+                  </div>
+                  <div className="p-5 text-left">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-700">
+                      {product.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                      {product.description}
+                    </p>
+                    <p className="text-blue-700 font-bold text-base">
+                      ${Number(product.price ?? 0).toLocaleString()}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-gray-500 mt-8">
+            No hot tubs available at the moment.
+          </p>
+        )}
 
         <div className="mt-10">
-          <a
+          <Link
             href="/models"
             className="inline-block bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-medium transition"
           >
             View All Models
-          </a>
+          </Link>
         </div>
       </section>
 
