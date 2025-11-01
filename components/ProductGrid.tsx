@@ -12,16 +12,33 @@ export function ProductGrid() {
   const [loading, setLoading] = useState(true);
   const [selectedBrand, setSelectedBrand] = useState("");
 
-  // Fetch products from Supabase
+  // Fetch Hot Tub products only
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
+
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select(
+          `
+            *,
+            product_categories ( name )
+          `
+        )
         .order("created_at", { ascending: false });
 
-      if (error) console.error("Error fetching products:", error);
-      setProducts((data as Product[]) || []);
+      if (error) {
+        console.error("Error fetching products:", error);
+        setLoading(false);
+        return;
+      }
+
+      // Filter to only Hot Tub category
+      const hotTubs = (data as any[]).filter(
+        (p) => p.product_categories?.name === "Hot Tub"
+      );
+
+      setProducts(hotTubs as Product[]);
       setLoading(false);
     };
 
@@ -54,7 +71,7 @@ export function ProductGrid() {
   if (loading) {
     return (
       <section className="px-6 pb-12 text-center">
-        <p className="text-gray-600">Loading products...</p>
+        <p className="text-gray-600">Loading hot tubs...</p>
       </section>
     );
   }
@@ -70,7 +87,7 @@ export function ProductGrid() {
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600">No products found for this brand.</p>
+          <p className="text-gray-600">No hot tubs found for this brand.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
