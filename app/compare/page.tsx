@@ -16,7 +16,7 @@ export default function ComparePage() {
   const router = useRouter();
   const idsParam = searchParams.get("ids");
 
-  // ✅ Memoized IDs so React doesn't warn about dependency changes
+  // ✅ Memoized IDs
   const ids = useMemo(() => {
     return idsParam
       ? idsParam
@@ -37,15 +37,12 @@ export default function ComparePage() {
       }
 
       const numericIds = ids.map((id) => Number(id)).filter((n) => !isNaN(n));
+
       let { data, error } = await supabase
         .from("products")
         .select("*")
-        .in("id", numericIds);
-
-      if (!data?.length) {
-        const retry = await supabase.from("products").select("*").in("id", ids);
-        if (retry.data?.length) data = retry.data;
-      }
+        .in("id", numericIds)
+        .eq("category_id", 1); // ✅ optional: only compare Hot Tubs
 
       if (error) console.error("Error fetching comparison products:", error);
       setProducts(data || []);
@@ -80,6 +77,7 @@ export default function ComparePage() {
       <NavBar />
 
       <main className="flex-1 py-[clamp(2rem,5vw,5rem)] px-[clamp(1rem,4vw,3rem)]">
+        {/* Header */}
         <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 py-4 mb-8">
           <div className="max-w-[90rem] mx-auto flex justify-between items-center px-[clamp(1rem,3vw,2rem)]">
             <h1 className="text-[clamp(1.5rem,2vw,2.5rem)] font-bold text-blue-800">
@@ -94,51 +92,54 @@ export default function ComparePage() {
           </div>
         </div>
 
+        {/* Product Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[clamp(1rem,2vw,2rem)] max-w-[90rem] mx-auto mb-[clamp(2rem,4vw,3rem)]">
-          {products.map((product) => (
-            <Link
-              key={product.id}
-              href={`/models/${product.id}`}
-              className="group block bg-white rounded-xl shadow-lg p-[clamp(1rem,2vw,1.5rem)] flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
-            >
-              <div className="relative w-full aspect-[4/3] mb-4 rounded-md overflow-hidden">
-                <Image
-                  src={
-                    getPublicUrl(
-                      product.storage_path ?? "",
-                      "product-images"
-                    ) || "/placeholder.jpg"
-                  }
-                  alt={product.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  placeholder="blur"
-                  blurDataURL="/placeholder-blur.jpg"
-                />
-              </div>
+          {products.map((product) => {
+            const imageUrl =
+              getPublicUrl(product.storage_path ?? "", "product-images") ||
+              "/placeholder.jpg";
 
-              <h2 className="text-[clamp(1.1rem,1.5vw,1.3rem)] font-semibold mb-2 text-gray-800 group-hover:text-blue-700 transition-colors">
-                {product.name}
-              </h2>
+            return (
+              <Link
+                key={product.id}
+                href={`/models/${product.id}`}
+                className="group block bg-white rounded-xl shadow-lg p-[clamp(1rem,2vw,1.5rem)] flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+              >
+                <div className="relative w-full aspect-[4/3] mb-4 rounded-md overflow-hidden">
+                  <Image
+                    src={imageUrl}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    placeholder="blur"
+                    blurDataURL="/placeholder-blur.jpg"
+                  />
+                </div>
 
-              <p className="text-gray-600 text-sm mb-3 flex-grow line-clamp-3">
-                {product.description}
-              </p>
+                <h2 className="text-[clamp(1.1rem,1.5vw,1.3rem)] font-semibold mb-2 text-gray-800 group-hover:text-blue-700 transition-colors">
+                  {product.name}
+                </h2>
 
-              <p className="text-blue-700 font-bold mb-1 text-[clamp(1rem,1.3vw,1.2rem)]">
-                ${product.price.toLocaleString()}
-              </p>
-
-              {product.rating && (
-                <p className="text-yellow-500 text-[clamp(0.9rem,1vw,1rem)]">
-                  ⭐ {product.rating.toFixed(1)}
+                <p className="text-gray-600 text-sm mb-3 flex-grow line-clamp-3">
+                  {product.description}
                 </p>
-              )}
-            </Link>
-          ))}
+
+                <p className="text-blue-700 font-bold mb-1 text-[clamp(1rem,1.3vw,1.2rem)]">
+                  ${Number(product.price).toLocaleString()}
+                </p>
+
+                {product.rating && (
+                  <p className="text-yellow-500 text-[clamp(0.9rem,1vw,1rem)]">
+                    ⭐ {Number(product.rating).toFixed(1)}
+                  </p>
+                )}
+              </Link>
+            );
+          })}
         </div>
 
+        {/* Comparison Table */}
         <section className="max-w-[90rem] mx-auto bg-white shadow-lg rounded-2xl p-[clamp(1.5rem,3vw,2.5rem)]">
           <h2 className="text-[clamp(1.5rem,2vw,2rem)] font-semibold text-blue-800 mb-6 text-center">
             Feature Highlights
@@ -192,9 +193,11 @@ export default function ComparePage() {
                         className="border-t px-4 py-3 text-gray-800"
                       >
                         {feature.key === "price" &&
-                          `$${p.price.toLocaleString()}`}
+                          `$${Number(p.price).toLocaleString()}`}
                         {feature.key === "rating" &&
-                          (p.rating ? `⭐ ${p.rating.toFixed(1)}` : "–")}
+                          (p.rating
+                            ? `⭐ ${Number(p.rating).toFixed(1)}`
+                            : "–")}
                         {feature.key === "seating_capacity" &&
                           p.seating_capacity}
                         {feature.key === "jet_count" && p.jet_count}
